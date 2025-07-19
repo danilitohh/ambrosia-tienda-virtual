@@ -1,0 +1,28 @@
+# Archivos generados por Prisma
+src/generated/
+*.generated.*
+
+# Archivos de configuración
+*.config.*
+*.config.js
+*.config.ts
+
+# Archivos de build
+.next/
+out/
+dist/
+
+# Archivos de dependencias
+node_modules/
+
+# Archivos de scripts
+scripts/
+
+# Archivos de migración
+prisma/migrations/
+
+# Archivos de documentación
+*.md
+
+# Archivos de entorno
+.env* 

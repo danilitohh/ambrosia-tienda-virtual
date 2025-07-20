@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://tu-dominio.netlify.app/sitemap.xml
+
+# Disallow admin and API routes
+Disallow: /api/
+Disallow: /admin/
+Disallow: /auth/
+
+# Allow important pages
+Allow: /
+Allow: /products
+Allow: /products/*
+Allow: /nosotros
+Allow: /cart
+Allow: /checkout 

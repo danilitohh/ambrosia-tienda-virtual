@@ -1,26 +1,44 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  // Configuración para mejor rendimiento y Netlify
-  experimental: {
-    optimizePackageImports: ['lucide-react', '@heroicons/react'],
-  },
-  // Optimizaciones de imágenes
   images: {
+    domains: ['localhost'],
     formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 60,
   },
-  // Configuración para Netlify
-  output: 'standalone',
-  trailingSlash: false,
-  // Configuración de servidor
-  serverExternalPackages: ['@prisma/client'],
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
+  // Configuraciones SEO adicionales
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+        ],
+      },
+    ]
+  },
+  // Generar sitemap estático
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap.xml',
+        destination: '/api/sitemap',
+      },
+    ]
+  },
 };
 
 export default nextConfig;

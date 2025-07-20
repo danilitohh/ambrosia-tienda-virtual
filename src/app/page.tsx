@@ -1,3 +1,20 @@
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Ambrosia Bhang - Los Mejores Brownies y Chocolates Artesanales en Medellín',
+  description: 'Descubre los mejores brownies y chocolates artesanales en Medellín. Brownies de chocolate, trufas, galletas y más. Envío a domicilio en Antioquia. ¡Sabor artesanal en cada bocado!',
+  keywords: 'brownies medellín, chocolates artesanales, brownies de chocolate, trufas, galletas, postres artesanales, ambrosia bhang, envío domicilio antioquia',
+  openGraph: {
+    title: 'Ambrosia Bhang - Los Mejores Brownies y Chocolates Artesanales en Medellín',
+    description: 'Descubre los mejores brownies y chocolates artesanales en Medellín. Envío a domicilio en Antioquia.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ambrosia Bhang - Los Mejores Brownies y Chocolates Artesanales en Medellín',
+    description: 'Descubre los mejores brownies y chocolates artesanales en Medellín.',
+  },
+}
+
 "use client";
 
 import Link from "next/link"

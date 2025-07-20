@@ -3,7 +3,7 @@
   publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "18.20"
   NPM_FLAGS = "--legacy-peer-deps"
   PRISMA_GENERATE_DATAPROXY = "false"
   PRISMA_CLI_QUERY_ENGINE_TYPE = "binary"

@@ -51,7 +51,14 @@ export default function ProductDetailPage() {
   // if (product.slug === "brownie-de-chocolate-x2") { descripcion = "..." }
 
   const handleAddToCart = () => {
-    addItem({ id: product.id, name: product.name, price: product.price, quantity });
+    addItem({ 
+      id: product.id, 
+      productId: product.id,
+      name: product.name, 
+      price: product.price, 
+      quantity,
+      image: product.images?.[0] || ""
+    });
     router.push("/cart");
   };
 

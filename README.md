@@ -1,6 +1,6 @@
-# Ambrosia - Tienda Virtual
+# 🚀 Ambrosia - Tienda Virtual
 
-Una tienda virtual completa y moderna construida con Next.js 14, TypeScript, Tailwind CSS, Prisma, NextAuth.js, Stripe y Resend.
+Una tienda virtual moderna y escalable construida con Next.js 15, TypeScript, Tailwind CSS, Prisma, NextAuth.js, Stripe y Resend, optimizada para alto rendimiento.
 
 ## 🚀 Características
 

@@ -21,7 +21,7 @@ export default function CartPage() {
   const [promoCodeLoading, setPromoCodeLoading] = useState(false);
 
   const subtotal = useMemo(() => items.reduce((sum, item) => sum + (item.price * item.quantity), 0), [items]);
-  const shipping = useMemo(() => subtotal > 50000 ? 0 : 5000, [subtotal]); // Envío gratis sobre $50,000
+  const shipping = 5000; // Costo fijo de envío
   const [propina, setPropina] = useState(0);
   const discount = useMemo(() => appliedPromoCode ? appliedPromoCode.discountAmount : 0, [appliedPromoCode]);
   const total = useMemo(() => subtotal + shipping + propina - discount, [subtotal, shipping, propina, discount]);
@@ -291,7 +291,7 @@ export default function CartPage() {
                 
                 <div className="flex justify-between text-gray-300">
                   <span>Envío</span>
-                  <span>{shipping === 0 ? "Gratis" : `$${shipping.toLocaleString('es-CO', {minimumFractionDigits: 0})}`}</span>
+                  <span>${shipping.toLocaleString('es-CO', {minimumFractionDigits: 0})}</span>
                 </div>
                 
                 {appliedPromoCode && (
@@ -382,12 +382,7 @@ export default function CartPage() {
                 )}
               </button>
 
-              {/* Free Shipping Notice */}
-              {subtotal < 50000 && (
-                <p className="text-sm text-gray-400 text-center mt-4">
-                  Agrega ${(50000 - subtotal).toLocaleString('es-CO', {minimumFractionDigits: 0})} más para envío gratis
-                </p>
-              )}
+
             </div>
           </div>
         </div>

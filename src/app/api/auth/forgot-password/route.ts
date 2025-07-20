@@ -13,11 +13,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'El correo es requerido.' }, { status: 400 });
     }
     
-    const user = await prisma.user.findUnique({ where: { email } });
+    // Buscar usuario por email (case insensitive)
+    const user = await prisma.user.findFirst({ 
+      where: { 
+        email: {
+          equals: email,
+          mode: 'insensitive'
+        }
+      } 
+    });
+    
     if (!user) {
       // Por seguridad, no revelar si el usuario existe o no
       console.log('Usuario no encontrado:', email);
       return NextResponse.json({ message: 'Si el correo existe, recibirás un enlace para restablecer tu contraseña.' });
+    }
+    
+    // Verificar que el usuario tenga email válido
+    if (!user.email || user.email.trim() === '') {
+      console.log('Usuario sin email válido:', user.id);
+      return NextResponse.json({ error: 'Esta cuenta no tiene un email válido configurado.' }, { status: 400 });
     }
     
     console.log('✅ Usuario encontrado:', user.email);

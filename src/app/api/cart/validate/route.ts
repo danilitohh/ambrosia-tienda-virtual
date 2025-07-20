@@ -2,10 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { rateLimiters } from "@/lib/rate-limit";
 
 // POST: Validar stock de productos en el carrito
 export async function POST(req: NextRequest) {
   try {
+    // Rate limiting
+    const rateLimitResult = rateLimiters.moderate(req);
+    if (rateLimitResult) return rateLimitResult;
+
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.email) {

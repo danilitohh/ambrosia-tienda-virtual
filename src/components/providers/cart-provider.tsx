@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 
 export type CartItem = {
   id: string;
+  productId: string;
   name: string;
   price: number;
   quantity: number;

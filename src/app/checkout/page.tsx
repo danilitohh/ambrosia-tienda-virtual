@@ -1,11 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { sendEmail } from "@/lib/email";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/components/providers/cart-provider";
+import Image from "next/image";
+import WhatsAppMessageModal from "@/components/whatsapp-message-modal";
 
-const BANCOLOMBIA_CUENTA = "12345678901";
 const NEQUI_NUMERO = "3043013144";
 const WHATSAPP_NUM = "573235924705"; // +57 323 5924705
 
@@ -43,6 +44,33 @@ export default function CustomCheckout() {
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
   const [propina, setPropina] = useState(0);
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [paymentSettings, setPaymentSettings] = useState({
+    bancolombiaCuenta: "12345678901",
+    bancolombiaQr: null as string | null,
+    nequiNumber: NEQUI_NUMERO,
+  });
+
+  // Cargar configuración de pagos
+  useEffect(() => {
+    const loadPaymentSettings = async () => {
+      try {
+        const res = await fetch("/api/admin/settings");
+        if (res.ok) {
+          const data = await res.json();
+          setPaymentSettings({
+            bancolombiaCuenta: data.bancolombiaCuenta || "12345678901",
+            bancolombiaQr: data.bancolombiaQr,
+            nequiNumber: data.nequiNumber || NEQUI_NUMERO,
+          });
+        }
+      } catch (error) {
+        console.error("Error cargando configuración de pagos:", error);
+      }
+    };
+
+    loadPaymentSettings();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -85,9 +113,16 @@ export default function CustomCheckout() {
     }
   };
 
-  const mensajeWhatsapp = orderId
-    ? `Hola, ya realicé el pago de mi pedido. Mi número de orden es ${orderId}. Mis datos de envío: Nombre: ${form.nombre}, Dirección: ${form.direccion}, Ciudad: ${form.ciudad}, Teléfono: ${form.telefono}`
-    : "";
+
+
+  const enviarMensajeWhatsApp = () => {
+    // Solo mostrar el modal con el mensaje
+    setShowWhatsAppModal(true);
+  };
+
+
+
+
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -154,39 +189,92 @@ export default function CustomCheckout() {
                 <span>${(total + propina).toLocaleString('es-CO')}</span>
               </div>
             </div>
-            <div className="mb-4 p-4 bg-[#23272a] rounded-lg border border-[#C6FF00] text-center">
-              <span className="block text-[#C6FF00] font-semibold mb-2">Por ahora solo tenemos disponible el pago por Nequi.</span>
-              <span className="block text-white">Realiza tu pago al número:</span>
-              <span className="block text-2xl font-bold text-[#C6FF00]">304 3013144</span>
-            </div>
+            {paymentSettings.bancolombiaQr && (
+              <div className="mb-4 p-4 bg-[#23272a] rounded-lg border border-[#C6FF00] text-center">
+                <span className="block text-[#C6FF00] font-semibold mb-2">Escanea el QR para pagar con Bancolombia</span>
+                <div className="flex justify-center">
+                  <Image
+                    src={paymentSettings.bancolombiaQr}
+                    alt="QR Bancolombia"
+                    width={200}
+                    height={200}
+                    className="rounded-lg border border-gray-600"
+                  />
+                </div>
+              </div>
+            )}
             <p className="mb-4 text-center text-white">Realiza la transferencia a través de uno de los siguientes métodos:</p>
             <div className="mb-4 w-full">
               <div className="bg-[#23272a] rounded p-3 mb-2">
                 <span className="block text-gray-400 text-xs">Cuenta Bancolombia</span>
-                <span className="font-bold text-lg text-white">{BANCOLOMBIA_CUENTA}</span>
+                <span className="font-bold text-lg text-white">{paymentSettings.bancolombiaCuenta}</span>
               </div>
               <div className="bg-[#23272a] rounded p-3">
                 <span className="block text-gray-400 text-xs">Nequi</span>
-                <span className="font-bold text-lg text-white">{NEQUI_NUMERO}</span>
+                <span className="font-bold text-lg text-white">{paymentSettings.nequiNumber}</span>
               </div>
             </div>
             <div className="mb-4 w-full text-center">
               <span className="block text-gray-400 text-xs mb-1">Número de orden</span>
               <span className="font-bold text-2xl text-[#C6FF00]">{orderId}</span>
             </div>
-            <a
-              href={`https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(mensajeWhatsapp)}`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={enviarMensajeWhatsApp}
               className="w-full bg-[#C6FF00] hover:bg-[#b2e600] text-black font-bold py-3 px-6 rounded-lg transition-colors text-center mb-4"
             >
-              Contactar por WhatsApp con mi número de orden
-            </a>
-            <p className="text-sm text-gray-300 mb-4 text-center">Después de transferir, envía el comprobante por WhatsApp o email para procesar tu pedido.</p>
+              Enviar pedido completo por WhatsApp
+            </button>
+            
+            <p className="text-sm text-gray-300 mb-4 text-center">
+              Al hacer clic se mostrará el mensaje completo de tu pedido para copiar y enviar por WhatsApp.
+              <br />
+              Después de transferir, envía el comprobante para procesar tu pedido.
+            </p>
             <a href="/" className="mt-4 text-[#C6FF00] hover:text-[#b2e600] underline">Volver al inicio</a>
           </div>
         )}
       </div>
+
+      {/* Modal de WhatsApp */}
+      <WhatsAppMessageModal
+        isOpen={showWhatsAppModal}
+        onClose={() => setShowWhatsAppModal(false)}
+        message={`¡Hola! 😊 Aquí está mi pedido completo:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 *DATOS DE ENVÍO*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• 👤 Nombre: ${form.nombre}
+• 🏠 Dirección: ${form.direccion}
+• 🌆 Ciudad: ${form.ciudad}
+• 🗺️ Departamento: ${form.departamento}
+• 📱 Teléfono: ${form.telefono}
+• 📧 Email: ${form.email}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🛒 *MI PEDIDO ESPECIAL*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🍪 *Productos seleccionados:*
+${items.map(item => {
+  let emoji = '🍪'; // default
+  if (item.name.toLowerCase().includes('brownie')) emoji = '🍫';
+  if (item.name.toLowerCase().includes('galleta')) emoji = '🍪';
+  if (item.name.toLowerCase().includes('chocolate')) emoji = '🍬';
+  if (item.name.toLowerCase().includes('postre')) emoji = '🍰';
+  return `• ${emoji} ${item.name} x${item.quantity} - $${(item.price * item.quantity).toLocaleString('es-CO')}`;
+}).join('\n')}
+
+${appliedPromoCode ? `🎫 *¡Código promocional aplicado!*\n${appliedPromoCode.code} (-$${discount.toLocaleString('es-CO')}) 💰` : ''}
+
+${propina > 0 ? `💝 *Propina para el equipo:* $${propina.toLocaleString('es-CO')} ❤️` : ''}
+
+💵 *Total a pagar:* $${(total + propina).toLocaleString('es-CO')}
+
+📝 *Número de orden:* ${orderId}
+
+¡Gracias por elegirnos! 🙏✨`}
+        phoneNumber={WHATSAPP_NUM}
+      />
     </div>
   );
 } 

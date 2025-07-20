@@ -4,7 +4,7 @@ import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Mail, Lock, Eye, EyeOff, User } from "lucide-react"
+import { Mail, Lock, Eye, EyeOff, User, Shield, Phone, ChevronDown, Globe } from "lucide-react"
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -12,6 +12,10 @@ export default function SignUp() {
     email: "",
     password: "",
     confirmPassword: "",
+    countryCode: "+57",
+    phone: "",
+    securityQuestion: "",
+    securityAnswer: "",
   })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -19,7 +23,15 @@ export default function SignUp() {
   const [error, setError] = useState("")
   const router = useRouter()
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const securityQuestions = [
+    "¿Cuál es el nombre de tu primera mascota?",
+    "¿En qué ciudad naciste?",
+    "¿Cuál es el nombre de tu madre?",
+    "¿Cuál es tu color favorito?",
+    "¿Cuál es el nombre de tu mejor amigo de la infancia?"
+  ]
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -43,6 +55,25 @@ export default function SignUp() {
       return
     }
 
+    if (!formData.phone.trim()) {
+      setError("El número de teléfono es requerido")
+      setIsLoading(false)
+      return
+    }
+
+    // Validar formato de teléfono (solo números)
+    if (!/^\d{10}$/.test(formData.phone.trim())) {
+      setError("El teléfono debe tener 10 dígitos (sin incluir el código de país)")
+      setIsLoading(false)
+      return
+    }
+
+    if (!formData.securityQuestion || !formData.securityAnswer.trim()) {
+      setError("La pregunta de seguridad y su respuesta son requeridas")
+      setIsLoading(false)
+      return
+    }
+
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
@@ -53,6 +84,9 @@ export default function SignUp() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
+          phone: formData.countryCode + formData.phone,
+          securityQuestion: formData.securityQuestion,
+          securityAnswer: formData.securityAnswer,
         }),
       })
 
@@ -139,6 +173,52 @@ export default function SignUp() {
               </div>
             </div>
             <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-300">
+                Número de teléfono
+              </label>
+              <div className="mt-1 flex">
+                <div className="relative flex-shrink-0">
+                  <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <select
+                    name="countryCode"
+                    value={formData.countryCode}
+                    onChange={handleChange}
+                    className="appearance-none relative block w-20 pl-10 pr-8 py-2 border border-gray-600 text-white bg-gray-700 rounded-l-md focus:outline-none focus:ring-[#C6FF00] focus:border-[#C6FF00] focus:z-10 sm:text-sm cursor-pointer"
+                  >
+                    <option value="+57">🇨🇴 +57</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+34">🇪🇸 +34</option>
+                    <option value="+52">🇲🇽 +52</option>
+                    <option value="+54">🇦🇷 +54</option>
+                    <option value="+55">🇧🇷 +55</option>
+                    <option value="+56">🇨🇱 +56</option>
+                    <option value="+58">🇻🇪 +58</option>
+                    <option value="+593">🇪🇨 +593</option>
+                    <option value="+51">🇵🇪 +51</option>
+                  </select>
+                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3 pointer-events-none" />
+                </div>
+                <div className="relative flex-1">
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    required
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-l-0 border-gray-600 placeholder-gray-400 text-white bg-gray-700 rounded-r-md focus:outline-none focus:ring-[#C6FF00] focus:border-[#C6FF00] focus:z-10 sm:text-sm"
+                    placeholder="3001234567"
+                    maxLength={10}
+                  />
+                </div>
+              </div>
+              <p className="mt-1 text-xs text-gray-400">
+                Solo números, sin incluir el código de país
+              </p>
+            </div>
+            <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300">
                 Contraseña
               </label>
@@ -188,6 +268,51 @@ export default function SignUp() {
                 >
                   {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
+              </div>
+            </div>
+            
+            {/* Pregunta de Seguridad */}
+            <div>
+              <label htmlFor="securityQuestion" className="block text-sm font-medium text-gray-300">
+                Pregunta de seguridad
+              </label>
+              <div className="mt-1 relative">
+                <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
+                <select
+                  id="securityQuestion"
+                  name="securityQuestion"
+                  required
+                  value={formData.securityQuestion}
+                  onChange={handleChange}
+                  className="appearance-none relative block w-full pl-10 pr-10 py-2 border border-gray-600 text-white bg-gray-700 rounded-md focus:outline-none focus:ring-[#C6FF00] focus:border-[#C6FF00] focus:z-10 sm:text-sm cursor-pointer"
+                >
+                  <option value="">Selecciona una pregunta</option>
+                  {securityQuestions.map((question, index) => (
+                    <option key={index} value={question}>
+                      {question}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <div>
+              <label htmlFor="securityAnswer" className="block text-sm font-medium text-gray-300">
+                Respuesta de seguridad
+              </label>
+              <div className="mt-1 relative">
+                <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <input
+                  id="securityAnswer"
+                  name="securityAnswer"
+                  type="text"
+                  required
+                  value={formData.securityAnswer}
+                  onChange={handleChange}
+                  className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-600 placeholder-gray-400 text-white bg-gray-700 rounded-md focus:outline-none focus:ring-[#C6FF00] focus:border-[#C6FF00] focus:z-10 sm:text-sm"
+                  placeholder="Tu respuesta"
+                />
               </div>
             </div>
           </div>

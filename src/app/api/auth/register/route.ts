@@ -4,10 +4,10 @@ import bcrypt from "bcryptjs"
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, password } = await request.json()
+    const { name, email, password, phone, securityQuestion, securityAnswer } = await request.json()
 
     // Validar datos de entrada
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !phone || !securityQuestion || !securityAnswer) {
       return NextResponse.json(
         { message: "Todos los campos son requeridos" },
         { status: 400 }
@@ -42,6 +42,9 @@ export async function POST(request: NextRequest) {
         name,
         email,
         password: hashedPassword,
+        phone,
+        securityQuestion,
+        securityAnswer,
       },
     })
 
@@ -55,8 +58,19 @@ export async function POST(request: NextRequest) {
     )
   } catch (error) {
     console.error("Error creating user:", error)
+    
+    // Verificar si es un error de Prisma
+    if (error instanceof Error) {
+      if (error.message.includes('Unique constraint')) {
+        return NextResponse.json(
+          { message: "Ya existe una cuenta con este email" },
+          { status: 400 }
+        )
+      }
+    }
+    
     return NextResponse.json(
-      { message: "Error interno del servidor" },
+      { message: "Error interno del servidor. Por favor, intenta de nuevo." },
       { status: 500 }
     )
   }

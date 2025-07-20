@@ -11,6 +11,16 @@ export function UserMenu() {
     return (
       <div className="flex items-center space-x-2">
         <span className="text-gray-300">Hola, {session.user?.name || session.user?.email}</span>
+        {session.user?.role === "ADMIN" && (
+          <Link
+            href="/admin"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#b2e600] hover:bg-[#9ed600] text-black font-semibold px-4 py-2 rounded transition-colors"
+          >
+            Admin
+          </Link>
+        )}
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
           className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold px-4 py-2 rounded transition-colors"

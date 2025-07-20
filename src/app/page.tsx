@@ -50,10 +50,15 @@ export default function Home() {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const res = await fetch("/api/products");
+        const res = await fetch("/api/products", {
+          headers: {
+            'Cache-Control': 'max-age=300' // 5 minutos de caché en cliente
+          }
+        });
         const data = await res.json();
         setProducts(data.products || []);
       } catch (error) {
+        console.error("Error cargando productos:", error);
         setProducts([]);
       } finally {
         setLoading(false);
@@ -272,16 +277,11 @@ export default function Home() {
           <h2 className="text-3xl font-bold mb-12 text-center text-[#C6FF00]">
             ¿Por qué elegirnos?
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                title: "Envío Gratis",
-                description: "En pedidos superiores a $50.000. Sí, puede ser entrega el mismo día. Si son envíos fuera de Medellín llegan de 1 a 2 día hábiles.",
-                icon: "🚚",
-              },
-              {
                 title: "Envíos seguros",
-                description: "Empacamos discretamente y trabajamos con transportadoras confiables para que tu pedido llegue a salvo.",
+                description: "Empacamos discretamente y trabajamos con transportadoras confiables para que tu pedido llegue a salvo. Puede ser entrega el mismo día. Si son envíos fuera de Medellín llegan de 1 a 2 día hábiles.",
                 icon: "📦",
               },
               {
@@ -318,7 +318,6 @@ export default function Home() {
             <div>
               <h4 className="text-lg font-semibold mb-4 text-[#C6FF00]">Contacto</h4>
               <ul className="space-y-2 text-gray-300">
-                <li>info@ambrosia.com</li>
                 <li>
                   <a
                     href="https://wa.me/573235924705"

@@ -75,9 +75,13 @@ export const authOptions: NextAuthOptions = {
     async jwt({ user, token }) {
       if (user) {
         token.sub = user.id;
-        // Obtener el rol del usuario desde la base de datos si está disponible
-        // (user.role puede venir de authorize o del adaptador)
-        token.role = (user as any).role;
+        // Obtener el rol del usuario desde la base de datos
+        const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+        if (dbUser) {
+          token.role = dbUser.role;
+        } else {
+          token.role = (user as any).role || "CUSTOMER";
+        }
       }
       // Si el token ya tiene un sub pero no tiene role, buscarlo en la base de datos
       if (!token.role && token.sub) {

@@ -30,6 +30,7 @@ export default function AdminPage() {
   // Formulario QR Bancolombia
   const [bancolombiaQr, setBancolombiaQr] = useState<string | null>(null);
   const [bancolombiaQrFile, setBancolombiaQrFile] = useState<File | null>(null);
+  const [bancolombiaCuenta, setBancolombiaCuenta] = useState("");
 
   // Cargar settings y productos
   useEffect(() => {
@@ -47,6 +48,7 @@ export default function AdminPage() {
         setAnnouncementImage(data?.announcementImage || null);
         setNequiNumber(data?.nequiNumber || "");
         setBancolombiaQr(data?.bancolombiaQr || null);
+        setBancolombiaCuenta(data?.bancolombiaCuenta || "");
       })
       .finally(() => setLoadingSettings(false));
     setLoadingProducts(true);
@@ -69,22 +71,34 @@ export default function AdminPage() {
   const handleSaveSettings = async () => {
     setSavingSettings(true);
     setSettingsMsg("");
-    const res = await fetch("/api/admin/settings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        announcement,
-        announcementImage,
-        nequiNumber,
-        bancolombiaQr,
-      }),
-    });
-    if (res.ok) {
-      setSettingsMsg("¡Configuración guardada!");
-    } else {
-      setSettingsMsg("Error al guardar");
+    try {
+      const res = await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          announcement,
+          announcementImage,
+          nequiNumber,
+          bancolombiaCuenta,
+          bancolombiaQr,
+        }),
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setSettingsMsg("¡Configuración guardada!");
+        console.log("Configuración guardada exitosamente:", data);
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        console.error("Error al guardar:", res.status, errorData);
+        setSettingsMsg(`Error al guardar: ${errorData.details || errorData.error || res.statusText}`);
+      }
+    } catch (error) {
+      console.error("Error de red:", error);
+      setSettingsMsg(`Error de red: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    } finally {
+      setSavingSettings(false);
     }
-    setSavingSettings(false);
   };
 
   // Cambiar disponibilidad producto
@@ -114,12 +128,20 @@ export default function AdminPage() {
     <div className="min-h-screen bg-black text-white p-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-[#C6FF00]">Panel de Administración</h1>
-        <button
-          onClick={() => router.push('/admin/promo-codes')}
-          className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold px-6 py-3 rounded-lg transition-colors"
-        >
-          Gestionar Códigos Promocionales
-        </button>
+        <div className="flex gap-4">
+          <button
+            onClick={() => router.push('/admin/products')}
+            className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold px-6 py-3 rounded-lg transition-colors"
+          >
+            Gestionar Productos
+          </button>
+          <button
+            onClick={() => router.push('/admin/promo-codes')}
+            className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold px-6 py-3 rounded-lg transition-colors"
+          >
+            Gestionar Códigos Promocionales
+          </button>
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Anuncio */}
@@ -182,6 +204,22 @@ export default function AdminPage() {
                 value={nequiNumber}
                 onChange={e => setNequiNumber(e.target.value)}
                 placeholder="Número de Nequi"
+              />
+              <button type="submit" className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold py-2 px-6 rounded-lg mt-2" disabled={savingSettings}>Guardar</button>
+              {settingsMsg && <div className="mt-2 text-sm text-[#C6FF00]">{settingsMsg}</div>}
+            </form>
+          )}
+        </section>
+        {/* Cuenta Bancolombia */}
+        <section className="bg-[#181818] p-6 rounded-lg border border-[#C6FF00]">
+          <h2 className="text-xl font-semibold mb-4 text-[#C6FF00]">Cuenta Bancolombia</h2>
+          {loadingSettings ? <div>Cargando...</div> : (
+            <form onSubmit={e => { e.preventDefault(); handleSaveSettings(); }}>
+              <input
+                className="w-full p-2 rounded bg-gray-800 border border-gray-700 text-white mb-2"
+                value={bancolombiaCuenta}
+                onChange={e => setBancolombiaCuenta(e.target.value)}
+                placeholder="Número de cuenta Bancolombia"
               />
               <button type="submit" className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold py-2 px-6 rounded-lg mt-2" disabled={savingSettings}>Guardar</button>
               {settingsMsg && <div className="mt-2 text-sm text-[#C6FF00]">{settingsMsg}</div>}

@@ -15,6 +15,37 @@
   to = "/.netlify/functions/___netlify-handler"
   status = 200
 
+# Configuración para páginas dinámicas
+[[redirects]]
+  from = "/admin/*"
+  to = "/.netlify/functions/___netlify-handler"
+  status = 200
+
+[[redirects]]
+  from = "/auth/*"
+  to = "/.netlify/functions/___netlify-handler"
+  status = 200
+
+[[redirects]]
+  from = "/products/*"
+  to = "/.netlify/functions/___netlify-handler"
+  status = 200
+
+[[redirects]]
+  from = "/checkout/*"
+  to = "/.netlify/functions/___netlify-handler"
+  status = 200
+
+[[redirects]]
+  from = "/cart"
+  to = "/.netlify/functions/___netlify-handler"
+  status = 200
+
+[[redirects]]
+  from = "/profile"
+  to = "/.netlify/functions/___netlify-handler"
+  status = 200
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

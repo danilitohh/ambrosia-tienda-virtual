@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
   },
+  // Configuración para Netlify
+  output: 'standalone',
+  // Evitar generación estática de APIs
+  trailingSlash: false,
 };
 
 export default nextConfig;

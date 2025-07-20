@@ -7,9 +7,10 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Configuración para mejor rendimiento
+  // Configuración para mejor rendimiento y Netlify
   experimental: {
     optimizePackageImports: ['lucide-react', '@heroicons/react'],
+    serverComponentsExternalPackages: ['@prisma/client'],
   },
   // Optimizaciones de imágenes
   images: {
@@ -17,10 +18,10 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60,
   },
   // Configuración para Netlify
-  output: 'export',
-  trailingSlash: true,
-  // Deshabilitar optimizaciones que causan problemas en Netlify
-  swcMinify: false,
+  output: 'standalone',
+  trailingSlash: false,
+  // Optimizaciones para Netlify
+  swcMinify: true,
 };
 
 export default nextConfig;

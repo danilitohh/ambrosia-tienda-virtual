@@ -1,15 +1,5 @@
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Checkout - Finalizar Compra | Ambrosia Bhang',
-  description: 'Finaliza tu compra de brownies y chocolates artesanales. Pago seguro y envío a domicilio en Medellín y Antioquia.',
-  robots: {
-    index: false,
-    follow: false,
-  },
-}
-
 "use client";
+
 import { useState, useEffect } from "react";
 import { sendEmail } from "@/lib/email";
 import { useSession } from "next-auth/react";

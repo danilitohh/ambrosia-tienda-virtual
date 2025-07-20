@@ -3,6 +3,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // GET: Obtener el carrito del usuario autenticado
 export async function GET(req: NextRequest) {
   try {

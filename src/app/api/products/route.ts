@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 import { rateLimiters } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {

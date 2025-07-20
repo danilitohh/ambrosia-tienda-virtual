@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 import { rateLimiters } from "@/lib/rate-limit";
 
 // POST: Validar stock de productos en el carrito

@@ -10,7 +10,6 @@ const nextConfig: NextConfig = {
   // Configuración para mejor rendimiento y Netlify
   experimental: {
     optimizePackageImports: ['lucide-react', '@heroicons/react'],
-    serverComponentsExternalPackages: ['@prisma/client'],
   },
   // Optimizaciones de imágenes
   images: {
@@ -20,8 +19,8 @@ const nextConfig: NextConfig = {
   // Configuración para Netlify
   output: 'standalone',
   trailingSlash: false,
-  // Optimizaciones para Netlify
-  swcMinify: true,
+  // Configuración de servidor
+  serverExternalPackages: ['@prisma/client'],
 };
 
 export default nextConfig;

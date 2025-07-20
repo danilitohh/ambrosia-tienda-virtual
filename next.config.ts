@@ -17,9 +17,10 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60,
   },
   // Configuración para Netlify
-  output: 'standalone',
-  // Evitar generación estática de APIs
-  trailingSlash: false,
+  output: 'export',
+  trailingSlash: true,
+  // Deshabilitar optimizaciones que causan problemas en Netlify
+  swcMinify: false,
 };
 
 export default nextConfig;

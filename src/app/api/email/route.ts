@@ -10,10 +10,13 @@ export async function POST(req: NextRequest) {
     const rateLimitResult = rateLimiters.strict(req);
     if (rateLimitResult) return rateLimitResult;
 
-    const { to, subject, html } = await req.json();
+    const body = await req.json();
+    console.log("[EMAIL API] Body recibido:", body);
+    const { to, subject, html } = body;
     
     // Validación mejorada
     if (!to || !subject || !html) {
+      console.error("[EMAIL API] Faltan campos obligatorios", { to, subject, html });
       return NextResponse.json({ 
         success: false, 
         error: "Faltan campos obligatorios" 
@@ -23,6 +26,7 @@ export async function POST(req: NextRequest) {
     // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(to)) {
+      console.error("[EMAIL API] Formato de email inválido", to);
       return NextResponse.json({ 
         success: false, 
         error: "Formato de email inválido" 
@@ -30,6 +34,7 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await sendEmail({ to, subject, html });
+    console.log("[EMAIL API] Resultado de sendEmail:", result);
     
     if (result.success) {
       return NextResponse.json({ 
@@ -37,13 +42,14 @@ export async function POST(req: NextRequest) {
         message: "Email enviado correctamente"
       });
     } else {
+      console.error("[EMAIL API] Error al enviar:", result.error);
       return NextResponse.json({ 
         success: false, 
         error: result.error 
       }, { status: 500 });
     }
   } catch (error) {
-    console.error("Error enviando email:", error);
+    console.error("[EMAIL API] Error enviando email:", error);
     return NextResponse.json({ 
       success: false, 
       error: "Error interno del servidor" 

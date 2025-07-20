@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/components/providers/cart-provider";
 import Image from "next/image";
 import WhatsAppMessageModal from "@/components/whatsapp-message-modal";
+import { Dialog } from "@headlessui/react";
 
 const NEQUI_NUMERO = "3043013144";
 const WHATSAPP_NUM = "573235924705"; // +57 323 5924705
@@ -50,6 +51,7 @@ export default function CustomCheckout() {
     bancolombiaQr: null as string | null,
     nequiNumber: NEQUI_NUMERO,
   });
+  const [showShippingModal, setShowShippingModal] = useState(true);
 
   // Cargar configuración de pagos
   useEffect(() => {
@@ -87,7 +89,7 @@ export default function CustomCheckout() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          to: form.email,
+          to: "ambrosiabhangg@gmail.com",
           subject: `Confirmación de pedido ${orden}`,
           html: `<h2>¡Gracias por tu pedido!</h2>
             <p>Tu número de orden es <b>${orden}</b>.</p>
@@ -99,9 +101,7 @@ export default function CustomCheckout() {
               <li><b>Departamento:</b> ${form.departamento}</li>
               <li><b>Teléfono:</b> ${form.telefono}</li>
               <li><b>Email:</b> ${form.email}</li>
-            </ul>
-            <p>Por favor realiza el pago siguiendo las instrucciones en pantalla y comparte tu comprobante junto con tu número de orden.</p>
-            <p>Si tienes dudas o para enviar tu comprobante, contáctanos por WhatsApp: <a href="https://wa.me/573235924705" style="color:#25D366;font-weight:bold;">323 5924705</a></p>`
+            </ul>`
         }),
       });
       const data = await res.json();
@@ -115,8 +115,35 @@ export default function CustomCheckout() {
 
 
 
-  const enviarMensajeWhatsApp = () => {
-    // Solo mostrar el modal con el mensaje
+  const enviarMensajeWhatsApp = async () => {
+    // Enviar correo a la tienda con los datos de envío y resumen
+    await fetch("/api/email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: "ambrosiabhangg@gmail.com",
+        subject: orderId,
+        html: `
+          <h2>Nuevo pedido por WhatsApp</h2>
+          <h3>Datos de envío:</h3>
+          <ul>
+            <li><b>Nombre:</b> ${form.nombre}</li>
+            <li><b>Dirección:</b> ${form.direccion}</li>
+            <li><b>Ciudad:</b> ${form.ciudad}</li>
+            <li><b>Departamento:</b> ${form.departamento}</li>
+            <li><b>Teléfono:</b> ${form.telefono}</li>
+            <li><b>Email:</b> ${form.email}</li>
+          </ul>
+          <h3>Resumen del pedido:</h3>
+          <ul>
+            ${items.map(item => `<li>${item.name} x${item.quantity} - $${(item.price * item.quantity).toLocaleString('es-CO')}</li>`).join('')}
+          </ul>
+          <p><b>Total a pagar:</b> $${(total + propina).toLocaleString('es-CO')}</p>
+          <p><b>Número de orden:</b> ${orderId}</p>
+        `
+      }),
+    });
+    // Mostrar el modal con el mensaje de WhatsApp
     setShowWhatsAppModal(true);
   };
 
@@ -126,6 +153,23 @@ export default function CustomCheckout() {
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      {/* Modal de Costo de Envío */}
+      <Dialog open={showShippingModal && step === "form"} onClose={() => setShowShippingModal(false)} className="fixed z-50 inset-0 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-60" aria-hidden="true" />
+        <div className="relative bg-[#181818] rounded-lg p-8 max-w-sm mx-auto border-2 border-[#C6FF00] text-center">
+          <Dialog.Title className="text-xl font-bold text-[#C6FF00] mb-2">Costo de envío</Dialog.Title>
+          <Dialog.Description className="mb-4 text-white">
+            El costo de envío <b>varía depende de la zona</b>.<br />
+            <span className="text-[#C6FF00]">El valor exacto se te informará por WhatsApp después de tu compra.</span>
+          </Dialog.Description>
+          <button
+            onClick={() => setShowShippingModal(false)}
+            className="mt-2 px-6 py-2 bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold rounded-lg"
+          >
+            Entendido
+          </button>
+        </div>
+      </Dialog>
       <div className="w-full max-w-md">
         {step === "form" ? (
           <>
@@ -155,12 +199,34 @@ export default function CustomCheckout() {
             <div className="mb-6 w-full">
               <h2 className="text-lg font-semibold mb-2 text-[#C6FF00]">Resumen de tu compra</h2>
               <ul className="mb-2 text-sm">
-                {items.map(item => (
-                  <li key={item.id} className="flex justify-between border-b border-gray-700 py-1">
-                    <span>{item.name} x{item.quantity}</span>
-                    <span>${(item.price * item.quantity).toLocaleString('es-CO')}</span>
-                  </li>
-                ))}
+                {items.map(item => {
+                  let nombre = item.name;
+                  // Eliminar la palabra 'chocolate' de los brownies
+                  if (nombre.toLowerCase().includes('brownie')) {
+                    nombre = nombre.replace(/chocolate/gi, '').replace(/\s+/g, ' ').trim();
+                  }
+                  let cantidad = '';
+                  // Si el nombre ya contiene 'de x2', 'de x3', etc., no agregar cantidad
+                  if (/de x\d+/i.test(nombre)) {
+                    cantidad = '';
+                  } else if (nombre.toLowerCase().includes('brownie')) {
+                    cantidad = item.quantity > 1 ? `combo (x${item.quantity})` : 'x1';
+                  } else if (nombre.toLowerCase().includes('galleta')) {
+                    cantidad = 'combo (x6)';
+                  } else if (nombre.toLowerCase().includes('trufa')) {
+                    cantidad = 'combo (x6)';
+                  } else if (nombre.toLowerCase().includes('chocolate')) {
+                    cantidad = 'combo (x8)';
+                  } else {
+                    cantidad = `x${item.quantity}`;
+                  }
+                  return (
+                    <li key={item.id} className="flex justify-between border-b border-gray-700 py-1">
+                      <span>{nombre}{cantidad ? ' ' + cantidad : ''}</span>
+                      <span>${(item.price * item.quantity).toLocaleString('es-CO')}</span>
+                    </li>
+                  );
+                })}
               </ul>
               <div className="flex justify-between py-1">
                 <span>Subtotal</span>
@@ -241,36 +307,43 @@ export default function CustomCheckout() {
         onClose={() => setShowWhatsAppModal(false)}
         message={`¡Hola! 😊 Aquí está mi pedido completo:
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 *DATOS DE ENVÍO*
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-• 👤 Nombre: ${form.nombre}
-• 🏠 Dirección: ${form.direccion}
-• 🌆 Ciudad: ${form.ciudad}
-• 🗺️ Departamento: ${form.departamento}
-• 📱 Teléfono: ${form.telefono}
-• 📧 Email: ${form.email}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🛒 *MI PEDIDO ESPECIAL*
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🍪 *Productos seleccionados:*
+🛒 MI PEDIDO ESPECIAL
+🍪 Productos seleccionados:
 ${items.map(item => {
-  let emoji = '🍪'; // default
-  if (item.name.toLowerCase().includes('brownie')) emoji = '🍫';
-  if (item.name.toLowerCase().includes('galleta')) emoji = '🍪';
-  if (item.name.toLowerCase().includes('chocolate')) emoji = '🍬';
-  if (item.name.toLowerCase().includes('postre')) emoji = '🍰';
-  return `• ${emoji} ${item.name} x${item.quantity} - $${(item.price * item.quantity).toLocaleString('es-CO')}`;
+  let nombre = item.name;
+  if (nombre.toLowerCase().includes('brownie')) {
+    nombre = nombre.replace(/chocolate/gi, '').replace(/\s+/g, ' ').trim();
+  }
+  let cantidad = '';
+  if (/de x\d+/i.test(nombre)) {
+    cantidad = '';
+  } else if (nombre.toLowerCase().includes('brownie')) {
+    cantidad = item.quantity > 1 ? `combo (x${item.quantity})` : 'x1';
+  } else if (nombre.toLowerCase().includes('galleta')) {
+    cantidad = 'combo (x6)';
+  } else if (nombre.toLowerCase().includes('trufa')) {
+    cantidad = 'combo (x6)';
+  } else if (nombre.toLowerCase().includes('chocolate')) {
+    cantidad = 'combo (x8)';
+  } else {
+    cantidad = `x${item.quantity}`;
+  }
+  let emoji = '🍪';
+  if (nombre.toLowerCase().includes('brownie')) emoji = '🍫';
+  if (nombre.toLowerCase().includes('galleta')) emoji = '🍪';
+  if (nombre.toLowerCase().includes('trufa')) emoji = '🍬';
+  if (nombre.toLowerCase().includes('chocolate')) emoji = '🍫';
+  if (nombre.toLowerCase().includes('postre')) emoji = '🍰';
+  return `• ${emoji} ${nombre}${cantidad ? ' ' + cantidad : ''} - $${(item.price * item.quantity).toLocaleString('es-CO')}`;
 }).join('\n')}
 
-${appliedPromoCode ? `🎫 *¡Código promocional aplicado!*\n${appliedPromoCode.code} (-$${discount.toLocaleString('es-CO')}) 💰` : ''}
+${appliedPromoCode ? `🎫 ¡Código promocional aplicado!\n${appliedPromoCode.code} (-$${discount.toLocaleString('es-CO')}) 💰` : ''}
 
-${propina > 0 ? `💝 *Propina para el equipo:* $${propina.toLocaleString('es-CO')} ❤️` : ''}
+${propina > 0 ? `💝 Propina para el equipo: $${propina.toLocaleString('es-CO')} ❤️` : ''}
 
-💵 *Total a pagar:* $${(total + propina).toLocaleString('es-CO')}
+💵 Total a pagar: $${(total + propina).toLocaleString('es-CO')}
 
-📝 *Número de orden:* ${orderId}
+📝 Número de orden: ${orderId}
 
 ¡Gracias por elegirnos! 🙏✨`}
         phoneNumber={WHATSAPP_NUM}

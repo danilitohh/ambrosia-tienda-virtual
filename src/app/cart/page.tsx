@@ -21,10 +21,9 @@ export default function CartPage() {
   const [promoCodeLoading, setPromoCodeLoading] = useState(false);
 
   const subtotal = useMemo(() => items.reduce((sum, item) => sum + (item.price * item.quantity), 0), [items]);
-  const shipping = 5000; // Costo fijo de envío
   const [propina, setPropina] = useState(0);
   const discount = useMemo(() => appliedPromoCode ? appliedPromoCode.discountAmount : 0, [appliedPromoCode]);
-  const total = useMemo(() => subtotal + shipping + propina - discount, [subtotal, shipping, propina, discount]);
+  const total = useMemo(() => subtotal + propina - discount, [subtotal, propina, discount]);
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -289,10 +288,6 @@ export default function CartPage() {
                   <span>${subtotal.toLocaleString('es-CO', {minimumFractionDigits: 0})}</span>
                 </div>
                 
-                <div className="flex justify-between text-gray-300">
-                  <span>Envío</span>
-                  <span>${shipping.toLocaleString('es-CO', {minimumFractionDigits: 0})}</span>
-                </div>
                 
                 {appliedPromoCode && (
                   <div className="flex justify-between text-green-400">

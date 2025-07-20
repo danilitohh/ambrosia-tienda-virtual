@@ -46,7 +46,7 @@ function testEmail() {
                 case 0:
                     console.log('🧪 Probando envío de email...');
                     return [4 /*yield*/, (0, email_1.sendEmail)({
-                            to: 'danilitohhh@gmail.com',
+                            to: 'ambrosiabhangg@gmail.com',
                             subject: 'Prueba de Email - Ambrosia Store',
                             html: "\n      <div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n        <h1 style=\"color: #8b5cf6;\">\uD83C\uDF89 \u00A1Email de prueba exitoso!</h1>\n        <p>Este es un email de prueba para verificar que la configuraci\u00F3n de Resend funciona correctamente.</p>\n        <p><strong>Fecha:</strong> ".concat(new Date().toLocaleString('es-ES'), "</p>\n        <p><strong>Proyecto:</strong> Ambrosia Store</p>\n        <hr style=\"border: 1px solid #e5e7eb; margin: 20px 0;\">\n        <p style=\"color: #6b7280; font-size: 14px;\">\n          Si recibes este email, significa que la configuraci\u00F3n de email est\u00E1 funcionando correctamente.\n        </p>\n      </div>\n    ")
                         })];

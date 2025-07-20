@@ -248,11 +248,11 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
-                "Brownie de chocolate x1",
-                "Chocolates",
-                "Galletas"
-              ].map((nombre, idx) => {
-                const prod = products.find(p => p.name.toLowerCase().includes(nombre.toLowerCase()));
+                { key1: 'brownie', key2: 'x3' },
+                { key1: 'gallet', key2: '6' },
+                { key1: 'choco', key2: '8' }
+              ].map(({ key1, key2 }) => {
+                const prod = products.find(p => p.name.toLowerCase().includes(key1) && p.name.toLowerCase().includes(key2));
                 return prod ? (
                   <div key={prod.id} className="rounded-lg overflow-hidden hover:transform hover:scale-105 transition-transform" style={{ background: '#181818', border: '1px solid #222' }}>
                     <div className="h-48 bg-gray-900 flex items-center justify-center">

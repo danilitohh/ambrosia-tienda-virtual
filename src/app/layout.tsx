@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/auth'
 import { SessionProvider } from '@/components/providers/session-provider'
 import { CartProvider } from '@/components/providers/cart-provider'
 import { ThemeProvider } from '@/components/providers/theme-provider'
-import { Toaster } from '@/components/ui/toaster'
+import { ToasterProvider, Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -80,19 +80,21 @@ export default async function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className={inter.className}>
-        <SessionProvider session={session}>
-          <CartProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="dark"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-              <Toaster />
-            </ThemeProvider>
-          </CartProvider>
-        </SessionProvider>
+        <ToasterProvider>
+          <SessionProvider session={session}>
+            <CartProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                enableSystem
+                disableTransitionOnChange
+              >
+                {children}
+                <Toaster />
+              </ThemeProvider>
+            </CartProvider>
+          </SessionProvider>
+        </ToasterProvider>
       </body>
     </html>
   )

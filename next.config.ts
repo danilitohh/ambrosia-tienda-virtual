@@ -45,15 +45,6 @@ const nextConfig: NextConfig = {
       },
     ]
   },
-  // Generar sitemap estático
-  async rewrites() {
-    return [
-      {
-        source: '/sitemap.xml',
-        destination: '/api/sitemap',
-      },
-    ]
-  },
 };
 
 export default nextConfig;

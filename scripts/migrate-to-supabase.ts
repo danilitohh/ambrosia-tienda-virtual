@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../src/generated/prisma'
 
 const localPrisma = new PrismaClient({
   datasources: {
@@ -11,7 +11,7 @@ const localPrisma = new PrismaClient({
 const supabasePrisma = new PrismaClient({
   datasources: {
     db: {
-      url: process.env.SUPABASE_DATABASE_URL || 'postgresql://postgres:[YOUR-PASSWORD]@db.efnlnipbrbnqgovyzmgz.supabase.co:5432/postgres'
+      url: process.env.SUPABASE_DATABASE_URL || 'postgresql://postgres.fmdnopkzeisopsohrzrq:Tr3scorazon!@aws-0-us-east-2.pooler.supabase.com:6543/postgres'
     }
   }
 })

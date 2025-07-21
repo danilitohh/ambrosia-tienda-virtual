@@ -49,10 +49,12 @@ async function migrateData() {
     
     for (const product of products) {
       try {
+        // Eliminar 'stock' del objeto antes de upsert
+        const { stock, ...productData } = product;
         await supabasePrisma.product.upsert({
           where: { id: product.id },
-          update: product,
-          create: product
+          update: productData,
+          create: productData
         })
         console.log(`✅ Producto migrado: ${product.name}`)
       } catch (error) {

@@ -36,7 +36,12 @@ export async function GET(req: NextRequest) {
       }
     });
   } catch (error) {
-    console.error("Error obteniendo productos:", error);
-    return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
+    // Logging detallado
+    if (error instanceof Error) {
+      console.error("[API PRODUCTS ERROR]", error.message, error.stack);
+    } else {
+      console.error("[API PRODUCTS ERROR]", error);
+    }
+    return NextResponse.json({ error: "Error interno del servidor", details: String(error) }, { status: 500 });
   }
 } 

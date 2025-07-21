@@ -60,16 +60,9 @@ export async function POST(req: NextRequest) {
         continue;
       }
 
-      if (product.stock < item.quantity) {
-        validationResults.push({
-          id: item.id,
-          name: product.name,
-          valid: false,
-          error: `Stock insuficiente. Disponible: ${product.stock}`,
-          availableStock: product.stock
-        });
-        continue;
-      }
+      // Busca y elimina cualquier chequeo como:
+      // if (product.stock < item.quantity) { ... }
+      // o similar, y haz que la validación siempre pase.
 
       validationResults.push({
         id: item.id,

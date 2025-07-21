@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { name, description, price, comparePrice, images, stock, categoryId, sku, slug } = await req.json();
+    const { name, description, price, comparePrice, images, categoryId, sku, slug } = await req.json();
     
     // Validar datos requeridos
     if (!name || !price || !categoryId) {
@@ -44,7 +44,6 @@ export async function POST(req: NextRequest) {
         price: parseFloat(price),
         comparePrice: comparePrice ? parseFloat(comparePrice) : null,
         images: images || [],
-        stock: parseInt(stock) || 0,
         categoryId,
         sku: sku || `SKU-${Date.now()}`,
         slug: slug || name.toLowerCase().replace(/\s+/g, '-'),
@@ -69,7 +68,7 @@ export async function PATCH(req: NextRequest) {
   }
 
   try {
-    const { id, isActive, name, description, price, comparePrice, images, stock, categoryId, sku, slug } = await req.json();
+    const { id, isActive, name, description, price, comparePrice, images, categoryId, sku, slug } = await req.json();
     
     if (!id) {
       return NextResponse.json({ error: "ID del producto es requerido" }, { status: 400 });
@@ -83,7 +82,6 @@ export async function PATCH(req: NextRequest) {
     if (price) updateData.price = parseFloat(price);
     if (comparePrice !== undefined) updateData.comparePrice = comparePrice ? parseFloat(comparePrice) : null;
     if (images) updateData.images = images;
-    if (stock !== undefined) updateData.stock = parseInt(stock);
     if (categoryId) updateData.categoryId = categoryId;
     if (sku) updateData.sku = sku;
     if (slug) updateData.slug = slug;

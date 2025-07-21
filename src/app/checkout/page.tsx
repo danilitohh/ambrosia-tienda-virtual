@@ -91,9 +91,9 @@ export default function CustomCheckout() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           to: "ambrosiabhangg@gmail.com",
-          subject: `Confirmación de pedido ${orden}`,
-          html: `<h2>¡Gracias por tu pedido!</h2>
-            <p>Tu número de orden es <b>${orden}</b>.</p>
+          subject: `Datos de envío - Orden ${orden}`,
+          html: `<h2>Nuevo pedido recibido</h2>
+            <p>El cliente ha completado el formulario de datos de envío.</p>
             <h3>Datos de envío:</h3>
             <ul>
               <li><b>Nombre:</b> ${form.nombre}</li>
@@ -102,6 +102,7 @@ export default function CustomCheckout() {
               <li><b>Departamento:</b> ${form.departamento}</li>
               <li><b>Teléfono:</b> ${form.telefono}</li>
               <li><b>Email:</b> ${form.email}</li>
+              <li><b>Número de orden:</b> ${orden}</li>
             </ul>`
         }),
       });
@@ -117,34 +118,7 @@ export default function CustomCheckout() {
 
 
   const enviarMensajeWhatsApp = async () => {
-    // Enviar correo a la tienda con los datos de envío y resumen
-    await fetch("/api/email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        to: "ambrosiabhangg@gmail.com",
-        subject: orderId,
-        html: `
-          <h2>Nuevo pedido por WhatsApp</h2>
-          <h3>Datos de envío:</h3>
-          <ul>
-            <li><b>Nombre:</b> ${form.nombre}</li>
-            <li><b>Dirección:</b> ${form.direccion}</li>
-            <li><b>Ciudad:</b> ${form.ciudad}</li>
-            <li><b>Departamento:</b> ${form.departamento}</li>
-            <li><b>Teléfono:</b> ${form.telefono}</li>
-            <li><b>Email:</b> ${form.email}</li>
-          </ul>
-          <h3>Resumen del pedido:</h3>
-          <ul>
-            ${items.map(item => `<li>${item.name} x${item.quantity} - $${(item.price * item.quantity).toLocaleString('es-CO')}</li>`).join('')}
-          </ul>
-          <p><b>Total a pagar:</b> $${(total + propina).toLocaleString('es-CO')}</p>
-          <p><b>Número de orden:</b> ${orderId}</p>
-        `
-      }),
-    });
-    // Mostrar el modal con el mensaje de WhatsApp
+    // Solo mostrar el modal de WhatsApp, NO enviar correo
     setShowWhatsAppModal(true);
   };
 

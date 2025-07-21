@@ -77,18 +77,6 @@ export default function CartPage() {
     }
   };
 
-  const handleValidateStock = async () => {
-    setLoading(true);
-    try {
-      // const isValid = await validateStock(); // This line was removed as per the edit hint
-      alert("Todos los productos están disponibles");
-    } catch (error) {
-      alert("Error validando el stock");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleApplyPromoCode = async () => {
     if (!promoCode.trim()) {
       setPromoCodeError('Ingresa un código promocional');

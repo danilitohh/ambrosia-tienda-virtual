@@ -23,7 +23,6 @@ export async function GET(req: NextRequest) {
         price: true,
         comparePrice: true,
         images: true,
-        stock: true,
         category: { select: { name: true } },
         description: true,
       },

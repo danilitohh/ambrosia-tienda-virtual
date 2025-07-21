@@ -25,7 +25,7 @@ async function exportData() {
     const products = await localPrisma.product.findMany()
     for (const product of products) {
       const imagesArray = product.images ? `ARRAY[${product.images.map(img => `'${img}'`).join(', ')}]` : 'ARRAY[]::text[]'
-      console.log(`INSERT INTO "Product" ("id", "name", "description", "price", "comparePrice", "images", "sku", "stock", "isActive", "isFeatured", "slug", "weight", "dimensions", "categoryId", "createdAt", "updatedAt") VALUES ('${product.id}', '${product.name.replace(/'/g, "''")}', '${product.description.replace(/'/g, "''")}', ${product.price}, ${product.comparePrice || 'NULL'}, ${imagesArray}, '${product.sku}', ${product.stock}, ${product.isActive}, ${product.isFeatured}, '${product.slug}', ${product.weight || 'NULL'}, ${product.dimensions ? `'${product.dimensions}'` : 'NULL'}, '${product.categoryId}', '${product.createdAt.toISOString()}', '${product.updatedAt.toISOString()}');`)
+      console.log(`INSERT INTO "Product" ("id", "name", "description", "price", "comparePrice", "images", "sku", "isActive", "isFeatured", "slug", "weight", "dimensions", "categoryId", "createdAt", "updatedAt") VALUES ('${product.id}', '${product.name.replace(/'/g, "''")}', '${product.description.replace(/'/g, "''")}', ${product.price}, ${product.comparePrice || 'NULL'}, ${imagesArray}, '${product.sku}', ${product.isActive}, ${product.isFeatured}, '${product.slug}', ${product.weight || 'NULL'}, ${product.dimensions ? `'${product.dimensions}'` : 'NULL'}, '${product.categoryId}', '${product.createdAt.toISOString()}', '${product.updatedAt.toISOString()}');`)
     }
 
     // Exportar configuraciones

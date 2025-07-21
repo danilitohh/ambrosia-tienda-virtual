@@ -142,7 +142,6 @@ async function main() {
           price: product.price,
           comparePrice: product.comparePrice,
           sku: product.sku,
-          stock: product.stock,
           isFeatured: product.isFeatured,
           slug: product.slug,
           images: product.images,

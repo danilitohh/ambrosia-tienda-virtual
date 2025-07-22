@@ -221,7 +221,7 @@ export default function CartPage() {
                     {/* Product Info */}
                     <div className="flex-1">
                       <h3 className="text-lg font-medium text-white">{item.name}</h3>
-                      <p className="text-gray-400">{item.price.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
+                      <p className="text-gray-400">${item.price.toLocaleString('es-CO', {minimumFractionDigits: 0})}</p>
                     </div>
 
                     {/* Quantity Controls */}
@@ -247,7 +247,7 @@ export default function CartPage() {
                     {/* Price */}
                     <div className="text-right">
                       <p className="text-lg font-semibold text-white">
-                        {(item.price * item.quantity).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}
+                        ${(item.price * item.quantity).toLocaleString('es-CO', {minimumFractionDigits: 0})}
                       </p>
                     </div>
 
@@ -273,14 +273,14 @@ export default function CartPage() {
               <div className="space-y-4">
                 <div className="flex justify-between text-gray-300">
                   <span>Subtotal ({itemCount} {itemCount === 1 ? 'artículo' : 'artículos'})</span>
-                  <span>{subtotal.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
+                  <span>${subtotal.toLocaleString('es-CO', {minimumFractionDigits: 0})}</span>
                 </div>
                 
                 
                 {appliedPromoCode && (
                   <div className="flex justify-between text-green-400">
                     <span>Descuento ({appliedPromoCode.code})</span>
-                    <span>-{discount.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
+                    <span>-${discount.toLocaleString('es-CO', {minimumFractionDigits: 0})}</span>
                   </div>
                 )}
                 
@@ -300,7 +300,7 @@ export default function CartPage() {
                 <div className="border-t border-gray-600 pt-4">
                   <div className="flex justify-between text-white font-semibold text-lg">
                     <span>Total</span>
-                    <span>{total.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
+                    <span>${total.toLocaleString('es-CO', {minimumFractionDigits: 0})}</span>
                   </div>
                 </div>
               </div>
@@ -321,7 +321,7 @@ export default function CartPage() {
                       </button>
                     </div>
                     <p className="text-green-300 text-xs">
-                      {appliedPromoCode.description} - Descuento: {discount.toLocaleString('es-CO')}
+                      {appliedPromoCode.description} - Descuento: ${discount.toLocaleString('es-CO')}
                     </p>
                   </div>
                 ) : (

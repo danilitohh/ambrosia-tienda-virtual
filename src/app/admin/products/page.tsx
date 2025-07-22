@@ -438,10 +438,10 @@ export default function ProductsAdminPage() {
 
               <div className="space-y-2 mb-4">
                 <p className="text-sm text-gray-300">{product.description}</p>
-                <p className="font-semibold">{product.price.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
+                <p className="font-semibold">${product.price.toLocaleString('es-CO')}</p>
                 {product.comparePrice && (
                   <p className="text-sm text-gray-400 line-through">
-                    {product.comparePrice.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}
+                    ${product.comparePrice.toLocaleString('es-CO')}
                   </p>
                 )}
                 <p className="text-sm text-gray-400">Categoría: {product.category?.name}</p>

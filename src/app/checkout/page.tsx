@@ -198,19 +198,19 @@ export default function CustomCheckout() {
                   return (
                     <li key={item.id} className="flex justify-between border-b border-gray-700 py-1">
                       <span>{nombre}{cantidad ? ' ' + cantidad : ''}</span>
-                      <span>{(item.price * item.quantity).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
+                      <span>${(item.price * item.quantity).toLocaleString('es-CO')}</span>
                     </li>
                   );
                 })}
               </ul>
               <div className="flex justify-between py-1">
                 <span>Subtotal</span>
-                <span>{(total + discount).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
+                <span>${(total + discount).toLocaleString('es-CO')}</span>
               </div>
               {appliedPromoCode && (
                 <div className="flex justify-between py-1 text-green-400">
                   <span>Descuento ({appliedPromoCode.code})</span>
-                  <span>-{discount.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
+                  <span>-${discount.toLocaleString('es-CO')}</span>
                 </div>
               )}
               <div className="flex justify-between py-1 items-center">
@@ -227,7 +227,7 @@ export default function CustomCheckout() {
               </div>
               <div className="flex justify-between font-bold">
                 <span>Total a pagar:</span>
-                <span>{total.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</span>
+                <span>${total.toLocaleString("es-CO")}</span>
               </div>
               <div className="text-center text-yellow-400 text-sm mt-2">
                 * El valor del domicilio no está incluido. Te informaremos el costo exacto por WhatsApp.
@@ -312,14 +312,14 @@ ${items.map(item => {
   if (nombre.toLowerCase().includes('trufa')) emoji = '🍬';
   if (nombre.toLowerCase().includes('chocolate')) emoji = '🍫';
   if (nombre.toLowerCase().includes('postre')) emoji = '🍰';
-  return `• ${emoji} ${nombre}${cantidad ? ' ' + cantidad : ''} - $${(item.price * item.quantity).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}`;
+  return `• ${emoji} ${nombre}${cantidad ? ' ' + cantidad : ''} - $${(item.price * item.quantity).toLocaleString('es-CO')}`;
 }).join('\n')}
 
-${appliedPromoCode ? `🎫 ¡Código promocional aplicado!\n${appliedPromoCode.code} (-$${discount.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}) 💰` : ''}
+${appliedPromoCode ? `🎫 ¡Código promocional aplicado!\n${appliedPromoCode.code} (-$${discount.toLocaleString('es-CO')}) 💰` : ''}
 
-${propina > 0 ? `💝 Propina para el equipo: $${propina.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })} ❤️` : ''}
+${propina > 0 ? `💝 Propina para el equipo: $${propina.toLocaleString('es-CO')} ❤️` : ''}
 
-💵 Total a pagar: $${(total + propina).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}
+💵 Total a pagar: $${(total + propina).toLocaleString('es-CO')}
 
 📝 Número de orden: ${orderId}
 

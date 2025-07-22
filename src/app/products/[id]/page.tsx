@@ -67,9 +67,17 @@ export default function ProductDetailPage() {
       <div className="bg-black rounded-lg shadow-lg p-8 w-full max-w-2xl flex flex-col items-center mx-auto mt-12">
         <Image src={product.images?.[0] || "/producto1.jpeg"} alt={product.name} width={500} height={500} className="rounded-lg mb-6 object-contain" />
         <h1 className="text-3xl font-bold mb-2" style={{ color: '#C6FF00' }}>{product.name}</h1>
-        <p className="text-2xl font-semibold mb-2" style={{ color: '#C6FF00' }}>{Number(product.price).toLocaleString("es-CO")}</p>
+        <p className="text-2xl font-semibold mb-2" style={{ color: '#C6FF00' }}>
+          {typeof product.price === 'number'
+            ? product.price.toLocaleString("es-CO", { style: 'currency', currency: 'COP' })
+            : product.price}
+        </p>
         {product.comparePrice && product.comparePrice > product.price && (
-          <span className="text-gray-400 line-through mb-2">${Number(product.comparePrice).toLocaleString("es-CO")}</span>
+          <span className="text-gray-400 line-through mb-2">
+            {typeof product.comparePrice === 'number'
+              ? product.comparePrice.toLocaleString("es-CO", { style: 'currency', currency: 'COP' })
+              : product.comparePrice}
+          </span>
         )}
         <p className="mb-6 text-center text-white whitespace-pre-line">{product.description || descripcion}</p>
         <div className="flex items-center space-x-4 mb-6">

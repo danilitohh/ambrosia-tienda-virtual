@@ -76,7 +76,7 @@ export default function ProductDetailPage() {
           <span className="text-gray-400 line-through mb-2">
             {typeof product.comparePrice === 'number'
               ? product.comparePrice.toLocaleString("es-CO", { style: 'currency', currency: 'COP' })
-              : product.comparePrice}
+              : null}
           </span>
         )}
         <p className="mb-6 text-center text-white whitespace-pre-line">{product.description || descripcion}</p>

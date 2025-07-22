@@ -134,15 +134,7 @@ export default function ProductsPage() {
                 />
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-gray-300 text-sm">Ordenar por:</span>
-              <select className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C6FF00] focus:border-[#C6FF00]">
-                <option value="newest">Más recientes</option>
-                <option value="price-low">Precio: Menor a Mayor</option>
-                <option value="price-high">Precio: Mayor a Menor</option>
-                <option value="rating">Mejor valorados</option>
-              </select>
-            </div>
+            {/* Eliminado el select de 'Ordenar por' */}
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

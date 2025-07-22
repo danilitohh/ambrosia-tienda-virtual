@@ -15,7 +15,6 @@ type Product = {
   price: number;
   comparePrice?: number;
   images: string[];
-  stock: number;
   category?: { name: string };
   description?: string;
   rating?: number;
@@ -57,36 +56,15 @@ export default function ProductsPage() {
     const product = products.find(p => p.id === id);
     if (!product) return;
 
-    const currentCartQuantity = getCurrentCartQuantity(id);
-    const maxAvailable = product.stock - currentCartQuantity;
-    
     // No permitir más de lo disponible
-    if (value > maxAvailable) {
-      value = maxAvailable;
-    }
-    
     if (value < 1) value = 1;
     
     setQuantities((prev) => ({ ...prev, [id]: value }));
-  }, [getCurrentCartQuantity, products]);
+  }, [products]);
 
   const handleAddToCart = useCallback(async (product: Product) => {
     const quantity = quantities[product.id] || 1;
-    const currentCartQuantity = getCurrentCartQuantity(product.id);
-    
-    // Validar stock disponible
-    if (currentCartQuantity + quantity > product.stock) {
-      addToast({
-        type: "error",
-        title: "Stock insuficiente",
-        message: `Solo quedan ${product.stock - currentCartQuantity} unidades disponibles.`,
-        duration: 4000,
-      });
-      return;
-    }
-
     setAddingToCart(prev => ({ ...prev, [product.id]: true }));
-
     try {
       addItem({ 
         id: product.id,
@@ -96,10 +74,7 @@ export default function ProductsPage() {
         quantity,
         image: product.images?.[0] || ""
       });
-
-      // Mostrar feedback visual
       setAddedToCart(prev => ({ ...prev, [product.id]: true }));
-      
       addToast({
         type: "success",
         title: "¡Producto agregado al carrito!",
@@ -107,13 +82,10 @@ export default function ProductsPage() {
         imageUrl: product.images?.[0] || "",
         duration: 3500,
       });
-
-      // Resetear cantidad después de agregar
       setTimeout(() => {
         setQuantities(prev => ({ ...prev, [product.id]: 1 }));
         setAddedToCart(prev => ({ ...prev, [product.id]: false }));
       }, 2000);
-
     } catch (error) {
       addToast({
         type: "error",
@@ -124,7 +96,7 @@ export default function ProductsPage() {
     } finally {
       setAddingToCart(prev => ({ ...prev, [product.id]: false }));
     }
-  }, [addItem, addToast, quantities, getCurrentCartQuantity]);
+  }, [addItem, addToast, quantities]);
 
   const memoizedProducts = useMemo(() => products, [products]);
 
@@ -178,8 +150,6 @@ export default function ProductsPage() {
             <div className="text-center text-white col-span-full">Cargando productos...</div>
           ) : memoizedProducts.map((product) => {
             const currentCartQuantity = getCurrentCartQuantity(product.id);
-            const availableStock = product.stock - currentCartQuantity;
-            const isOutOfStock = availableStock <= 0;
             const isAdding = addingToCart[product.id];
             const isAdded = addedToCart[product.id];
             
@@ -199,13 +169,9 @@ export default function ProductsPage() {
                   {/* Stock indicator */}
                   <div className="absolute bottom-2 left-2">
                     <span className={`text-xs px-2 py-1 rounded-full ${
-                      availableStock > 5 ? 'bg-green-500 text-white' : 
-                      availableStock > 0 ? 'bg-yellow-500 text-black' : 
-                      'bg-red-500 text-white'
+                      'bg-green-500 text-white'
                     }`}>
-                      {availableStock > 5 ? 'En stock' : 
-                       availableStock > 0 ? `Solo ${availableStock}` : 
-                       'Agotado'}
+                      En stock
                     </span>
                   </div>
                 </div>
@@ -241,22 +207,18 @@ export default function ProductsPage() {
                     <input
                       type="number"
                       min={1}
-                      max={availableStock}
-                      value={quantities[product.id] || 1}
+                      value={Number.isFinite(quantities[product.id]) ? quantities[product.id] : 1}
                       onChange={e => handleQuantityChange(product.id, Math.max(1, Number(e.target.value)))}
                       className="w-14 px-2 py-1 rounded bg-gray-800 border border-gray-700 text-white text-center focus:outline-none focus:ring-2 focus:ring-[#C6FF00]"
-                      disabled={isOutOfStock}
                       style={{ minWidth: 0 }}
                     />
                     <button
-                      disabled={isOutOfStock || isAdding}
+                      disabled={isAdding}
                       onClick={() => handleAddToCart(product)}
                       className={`font-medium py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm focus:outline-none focus:ring-0 focus:border-none active:outline-none active:ring-0 active:border-none ${
                         isAdded 
                           ? 'bg-green-500 text-white' 
-                          : isOutOfStock 
-                            ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-                            : 'bg-[#C6FF00] hover:bg-[#b2e600] text-black'
+                          : 'bg-[#C6FF00] hover:bg-[#b2e600] text-black'
                       }`}
                       style={{ minWidth: 'auto', outline: 'none', boxShadow: 'none', border: 'none' }}
                     >
@@ -273,7 +235,7 @@ export default function ProductsPage() {
                       ) : (
                         <>
                           <ShoppingCart className="h-4 w-4" />
-                          <span>{isOutOfStock ? "Agotado" : "Agregar al carrito"}</span>
+                          <span>Agregar al carrito</span>
                         </>
                       )}
                     </button>
@@ -292,5 +254,5 @@ export default function ProductsPage() {
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

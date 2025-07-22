@@ -13,7 +13,6 @@ export type Product = {
   price: number;
   comparePrice?: number;
   images: string[];
-  stock: number;
   category?: { name: string };
   description?: string;
 };

@@ -11,7 +11,6 @@ interface Product {
   price: number;
   comparePrice?: number;
   images: string[];
-  stock: number;
   isActive: boolean;
   sku: string;
   slug: string;
@@ -46,7 +45,6 @@ export default function ProductsAdminPage() {
     description: "",
     price: "",
     comparePrice: "",
-    stock: "0",
     categoryId: "",
     sku: "",
     slug: "",
@@ -125,7 +123,6 @@ export default function ProductsAdminPage() {
       description: "",
       price: "",
       comparePrice: "",
-      stock: "0",
       categoryId: "",
       sku: "",
       slug: "",
@@ -180,7 +177,6 @@ export default function ProductsAdminPage() {
       description: product.description,
       price: product.price.toString(),
       comparePrice: product.comparePrice?.toString() || "",
-      stock: product.stock.toString(),
       categoryId: product.categoryId,
       sku: product.sku,
       slug: product.slug,
@@ -298,16 +294,6 @@ export default function ProductsAdminPage() {
                     step="0.01"
                     value={form.comparePrice}
                     onChange={e => setForm(prev => ({ ...prev, comparePrice: e.target.value }))}
-                    className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-2">Stock</label>
-                  <input
-                    type="number"
-                    value={form.stock}
-                    onChange={e => setForm(prev => ({ ...prev, stock: e.target.value }))}
                     className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white"
                   />
                 </div>
@@ -458,7 +444,6 @@ export default function ProductsAdminPage() {
                     ${product.comparePrice.toLocaleString('es-CO')}
                   </p>
                 )}
-                <p className="text-sm">Stock: {product.stock}</p>
                 <p className="text-sm text-gray-400">Categoría: {product.category?.name}</p>
               </div>
 

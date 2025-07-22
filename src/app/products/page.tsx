@@ -180,7 +180,7 @@ export default function ProductsPage() {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-2">
                       <span className="text-xl font-bold" style={{ color: '#C6FF00' }}>
-                        ${product.price.toLocaleString("es-CO")}
+                        {product.price.toLocaleString("es-CO", { style: "currency", currency: "COP" })}
                       </span>
                     </div>
                   </div>

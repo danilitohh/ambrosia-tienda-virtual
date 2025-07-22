@@ -154,28 +154,19 @@ export default function ProductsPage() {
             const isAdded = addedToCart[product.id];
             
             return (
-              <div key={product.id} className="rounded-lg overflow-hidden hover:transform hover:scale-105 transition-transform" style={{ background: '#181818', border: '1px solid #222' }}>
-                <div className="relative">
-                  <div className="absolute top-0 left-0 w-full flex justify-center items-center h-12 bg-black bg-opacity-60 z-10">
-                    <span className="text-lg font-bold text-white text-center px-2 truncate">{product.name}</span>
-                  </div>
-                  <div className="h-48 bg-gray-900 flex items-center justify-center">
-                    <Image src={product.images?.[0] || "/producto1.jpeg"} alt={product.name} width={300} height={300} className="object-contain" loading="lazy" />
-                  </div>
-                  <button className="absolute top-2 right-2 text-gray-400 hover:text-[#C6FF00] transition-colors">
-                    <Heart className="h-5 w-5" />
-                  </button>
-                  
-                  {/* Stock indicator */}
-                  <div className="absolute bottom-2 left-2">
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      'bg-green-500 text-white'
-                    }`}>
-                      En stock
-                    </span>
-                  </div>
+              <div key={product.id} className="rounded-lg overflow-hidden bg-[#181818] border border-[#222] flex flex-col">
+                <div className="relative w-full aspect-[16/9] bg-gray-900 flex items-center justify-center">
+                  <Image
+                    src={product.images?.[0] || "/producto1.jpeg"}
+                    alt={product.name}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                  {/* Badge de stock si lo deseas */}
                 </div>
-                <div className="p-4">
+                <div className="p-4 flex flex-col flex-1">
+                  <span className="text-lg font-bold text-white mb-2 text-center">{product.name}</span>
                   <div className="mb-2">
                     <span className="text-xs text-gray-400 uppercase tracking-wide">
                       {typeof product.category === 'object' ? product.category?.name : product.category}
@@ -201,8 +192,6 @@ export default function ProductsPage() {
                       </span>
                     </div>
                   </div>
-                  
-                  
                   <div className="flex space-x-2 items-center justify-center mt-2">
                     <input
                       type="number"

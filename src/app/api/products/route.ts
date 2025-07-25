@@ -23,7 +23,6 @@ export async function GET(req: NextRequest) {
         price: true,
         comparePrice: true,
         images: true,
-        stock: true,
         category: { select: { name: true } },
         description: true,
       },
@@ -44,4 +43,4 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json({ error: "Error interno del servidor", details: String(error) }, { status: 500 });
   }
-} 
+}

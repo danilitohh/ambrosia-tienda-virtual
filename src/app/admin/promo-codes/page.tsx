@@ -64,7 +64,15 @@ export default function PromoCodesPage() {
     try {
       // Cargar productos
       const productsRes = await fetch('/api/admin/products');
-      const productsData = await productsRes.json();
+      let productsData = [];
+      if (productsRes.ok) {
+        const text = await productsRes.text();
+        productsData = text ? JSON.parse(text) : [];
+      } else {
+        // Si hay error, muestra alerta y deja productos vacío
+        alert('No tienes permisos para ver los productos o hubo un error en el servidor.');
+        productsData = [];
+      }
       setProducts(Array.isArray(productsData) ? productsData : []);
 
       // Cargar códigos promocionales
@@ -342,4 +350,4 @@ export default function PromoCodesPage() {
       </div>
     </div>
   );
-} 
+}

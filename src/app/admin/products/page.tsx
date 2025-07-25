@@ -11,7 +11,6 @@ interface Product {
   price: number;
   comparePrice?: number;
   images: string[];
-  stock: number;
   isActive: boolean;
   sku: string;
   slug: string;
@@ -46,13 +45,11 @@ export default function ProductsAdminPage() {
     description: "",
     price: "",
     comparePrice: "",
-    stock: "0",
     categoryId: "",
     sku: "",
     slug: "",
     images: [] as string[]
   });
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -92,7 +89,6 @@ export default function ProductsAdminPage() {
     if (!files) return;
     
     const newImages: string[] = [];
-    const newFiles: File[] = [];
     
     Array.from(files).forEach(file => {
       const reader = new FileReader();
@@ -105,10 +101,7 @@ export default function ProductsAdminPage() {
         }
       };
       reader.readAsDataURL(file);
-      newFiles.push(file);
     });
-    
-    setImageFiles(prev => [...prev, ...newFiles]);
   };
 
   const removeImage = (index: number) => {
@@ -116,7 +109,6 @@ export default function ProductsAdminPage() {
       ...prev,
       images: prev.images.filter((_, i) => i !== index)
     }));
-    setImageFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const resetForm = () => {
@@ -125,21 +117,17 @@ export default function ProductsAdminPage() {
       description: "",
       price: "",
       comparePrice: "",
-      stock: "0",
       categoryId: "",
       sku: "",
       slug: "",
       images: []
     });
-    setImageFiles([]);
     setEditingProduct(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    setMessage("");
-
     try {
       const url = editingProduct 
         ? `/api/admin/products` 
@@ -157,7 +145,7 @@ export default function ProductsAdminPage() {
       });
 
       if (res.ok) {
-        const data = await res.json();
+        await res.json();
         setMessage(editingProduct ? "Producto actualizado correctamente" : "Producto creado correctamente");
         resetForm();
         setShowForm(false);
@@ -180,7 +168,6 @@ export default function ProductsAdminPage() {
       description: product.description,
       price: product.price.toString(),
       comparePrice: product.comparePrice?.toString() || "",
-      stock: product.stock.toString(),
       categoryId: product.categoryId,
       sku: product.sku,
       slug: product.slug,
@@ -298,16 +285,6 @@ export default function ProductsAdminPage() {
                     step="0.01"
                     value={form.comparePrice}
                     onChange={e => setForm(prev => ({ ...prev, comparePrice: e.target.value }))}
-                    className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-2">Stock</label>
-                  <input
-                    type="number"
-                    value={form.stock}
-                    onChange={e => setForm(prev => ({ ...prev, stock: e.target.value }))}
                     className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white"
                   />
                 </div>
@@ -458,7 +435,6 @@ export default function ProductsAdminPage() {
                     ${product.comparePrice.toLocaleString('es-CO')}
                   </p>
                 )}
-                <p className="text-sm">Stock: {product.stock}</p>
                 <p className="text-sm text-gray-400">Categoría: {product.category?.name}</p>
               </div>
 
@@ -482,4 +458,4 @@ export default function ProductsAdminPage() {
       )}
     </div>
   );
-} 
+}

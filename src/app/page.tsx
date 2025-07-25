@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link"
-import { ShoppingCart, User, Search, Menu, ArrowRight, X } from "lucide-react"
+import { ShoppingCart, Menu, ArrowRight, X } from "lucide-react"
 import { UserMenu } from "@/components/ui/user-menu";
 import { CartIndicator } from "@/components/ui/cart-indicator";
 import Image from "next/image";
@@ -13,7 +13,6 @@ export type Product = {
   price: number;
   comparePrice?: number;
   images: string[];
-  stock: number;
   category?: { name: string };
   description?: string;
 };
@@ -22,7 +21,12 @@ export default function Home() {
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [announcementConfig, setAnnouncementConfig] = useState<any>(null);
+  type AnnouncementConfig = {
+    announcement?: string;
+    announcementImage?: string;
+  };
+
+  const [announcementConfig, setAnnouncementConfig] = useState<AnnouncementConfig | null>(null);
 
   // Mostrar el anuncio al cargar la página
   useEffect(() => {
@@ -91,9 +95,6 @@ export default function Home() {
     setShowAnnouncement(false);
   };
 
-  const showAnnouncementAgain = () => {
-    setShowAnnouncement(true);
-  };
 
   return (
     <div className="min-h-screen bg-black">
@@ -187,13 +188,7 @@ export default function Home() {
               <Link href="/nosotros" className="text-[#C6FF00] hover:text-[#b2e600] transition-colors">
                 Nosotros
               </Link>
-              <button
-                onClick={showAnnouncementAgain}
-                className="text-[#C6FF00] hover:text-[#b2e600] transition-colors text-sm"
-                title="Ver anuncio"
-              >
-                📢 Anuncio
-              </button>
+              {/* Botón de anuncio eliminado */}
             </nav>
 
             {/* User Actions */}
@@ -248,20 +243,27 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
-                "Brownie x3",
+                "Brownie de chocolate x3",
                 "Galletas",
                 "Chocolates"
               ].map(nombre => {
                 const prod = products.find(p => p.name.trim().toLowerCase() === nombre.toLowerCase());
                 return prod ? (
                   <div key={prod.id} className="rounded-lg overflow-hidden hover:transform hover:scale-105 transition-transform" style={{ background: '#181818', border: '1px solid #222' }}>
-                    <div className="h-48 bg-gray-900 flex items-center justify-center">
-                      <Image src={prod.images[0] || "/producto1.jpeg"} alt={prod.name} width={300} height={300} className="object-contain" loading="lazy" />
+                    <div className="h-72 bg-gray-900 flex items-center justify-center">
+                      <Image 
+                        src={prod.images[0] || "/producto1.jpeg"} 
+                        alt={prod.name} 
+                        width={350} 
+                        height={250} 
+                        className="object-contain w-full h-full" 
+                        style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }} 
+                        loading="lazy" 
+                      />
                     </div>
                     <div className="p-4 flex flex-col items-center">
                       <span className="text-lg font-bold text-white mb-2 text-center">{prod.name}</span>
-                      <span className="text-[#C6FF00] font-semibold text-xl mb-4">${Number(prod.price).toLocaleString('es-CO')}</span>
-                      <Link href={`/products/${prod.id}`} className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold py-2 px-6 rounded-lg transition-colors">Ver producto</Link>
+                      {/* Botón 'Ver producto' eliminado */}
                     </div>
                   </div>
                 ) : null;

@@ -1,5 +1,6 @@
 import { PrismaClient } from '../src/generated/prisma'
 import { slugify } from '../src/lib/utils'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
@@ -17,7 +18,6 @@ async function main() {
       price: 33000,
       comparePrice: 33000,
       sku: 'AMB-BROWNIE-X2',
-      stock: 100,
       isFeatured: true,
       slug: slugify('Brownie de chocolate x2'),
       categorySlug: 'brownies',
@@ -29,7 +29,6 @@ async function main() {
       price: 41900,
       comparePrice: 41900,
       sku: 'AMB-BROWNIE-X3',
-      stock: 100,
       isFeatured: true,
       slug: slugify('Brownie de chocolate x3'),
       categorySlug: 'brownies',
@@ -41,7 +40,6 @@ async function main() {
       price: 29900,
       comparePrice: 29900,
       sku: 'AMB-GALLETAS',
-      stock: 100,
       isFeatured: true,
       slug: slugify('Galletas'),
       categorySlug: 'galletas',
@@ -53,7 +51,6 @@ async function main() {
       price: 20000,
       comparePrice: 20000,
       sku: 'AMB-BROWNIE-X1',
-      stock: 100,
       isFeatured: true,
       slug: slugify('Brownie de chocolate x1'),
       categorySlug: 'brownies',
@@ -65,7 +62,6 @@ async function main() {
       price: 22000,
       comparePrice: 22000,
       sku: 'AMB-ALFAJOR',
-      stock: 100,
       isFeatured: true,
       slug: slugify('Alfajor'),
       categorySlug: 'alfajores',
@@ -77,7 +73,6 @@ async function main() {
       price: 29900,
       comparePrice: 29900,
       sku: 'AMB-CHOCOLATES',
-      stock: 100,
       isFeatured: true,
       slug: slugify('Chocolates'),
       categorySlug: 'chocolates',
@@ -89,7 +84,6 @@ async function main() {
       price: 41900,
       comparePrice: 41900,
       sku: 'AMB-COMBO',
-      stock: 100,
       isFeatured: true,
       slug: slugify('Combo armable'),
       categorySlug: 'combos',
@@ -101,7 +95,6 @@ async function main() {
       price: 29900,
       comparePrice: 29900,
       sku: 'AMB-TRUFAS',
-      stock: 100,
       isFeatured: true,
       slug: slugify('Trufas'),
       categorySlug: 'trufas',
@@ -142,7 +135,6 @@ async function main() {
           price: product.price,
           comparePrice: product.comparePrice,
           sku: product.sku,
-          stock: product.stock,
           isFeatured: product.isFeatured,
           slug: product.slug,
           images: product.images,
@@ -155,13 +147,15 @@ async function main() {
   console.log('✅ Productos creados')
 
   // Crear usuario admin de ejemplo
-  const adminUser = await prisma.user.upsert({
+  const password = await bcrypt.hash('admin123', 12);
+  await prisma.user.upsert({
     where: { email: 'admin@ambrosia.com' },
-    update: {},
+    update: { password },
     create: {
       name: 'Administrador',
       email: 'admin@ambrosia.com',
       role: 'ADMIN',
+      password,
     },
   })
 
@@ -179,4 +173,4 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect()
-  }) 
+  })

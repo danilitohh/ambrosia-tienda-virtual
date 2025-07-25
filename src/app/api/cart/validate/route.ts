@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     for (const item of items) {
       const product = await prisma.product.findUnique({
         where: { id: item.id },
-        select: { id: true, name: true, stock: true, isActive: true }
+        select: { id: true, name: true, isActive: true }
       });
 
       if (!product) {
@@ -60,17 +60,8 @@ export async function POST(req: NextRequest) {
         continue;
       }
 
-      if (product.stock < item.quantity) {
-        validationResults.push({
-          id: item.id,
-          name: product.name,
-          valid: false,
-          error: `Stock insuficiente. Disponible: ${product.stock}`,
-          availableStock: product.stock
-        });
-        continue;
-      }
-
+      // Elimina chequeo de stock, ya que el campo fue removido del modelo y la base de datos.
+      // Solo valida existencia y estado activo del producto.
       validationResults.push({
         id: item.id,
         name: product.name,
@@ -93,4 +84,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-} 
+}

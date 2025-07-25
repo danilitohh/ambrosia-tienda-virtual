@@ -9,27 +9,30 @@ export default function AdminPage() {
   const router = useRouter();
 
   // Estados para settings
-  const [settings, setSettings] = useState<any>(null);
   const [loadingSettings, setLoadingSettings] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
   const [settingsMsg, setSettingsMsg] = useState("");
 
-  // Estados para productos
-  const [products, setProducts] = useState<any[]>([]);
+  // Tipar correctamente el estado de productos y eliminar estados no usados
+  interface Product {
+    id: string;
+    name: string;
+    isActive: boolean;
+    // Agrega otros campos si los necesitas
+  }
+  const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [savingProductId, setSavingProductId] = useState<string | null>(null);
 
   // Formulario anuncio
   const [announcement, setAnnouncement] = useState("");
   const [announcementImage, setAnnouncementImage] = useState<string | null>(null);
-  const [announcementImageFile, setAnnouncementImageFile] = useState<File | null>(null);
 
   // Formulario Nequi
   const [nequiNumber, setNequiNumber] = useState("");
 
   // Formulario QR Bancolombia
   const [bancolombiaQr, setBancolombiaQr] = useState<string | null>(null);
-  const [bancolombiaQrFile, setBancolombiaQrFile] = useState<File | null>(null);
   const [bancolombiaCuenta, setBancolombiaCuenta] = useState("");
 
   // Cargar settings y productos
@@ -43,7 +46,6 @@ export default function AdminPage() {
         return text ? JSON.parse(text) : {};
       })
       .then(data => {
-        setSettings(data);
         setAnnouncement(data?.announcement || "");
         setAnnouncementImage(data?.announcementImage || null);
         setNequiNumber(data?.nequiNumber || "");
@@ -53,7 +55,16 @@ export default function AdminPage() {
       .finally(() => setLoadingSettings(false));
     setLoadingProducts(true);
     fetch("/api/admin/products")
-      .then(res => res.json())
+      .then(async res => {
+        if (!res.ok) {
+          setProducts([]);
+          // Mostrar mensaje de error si no autorizado o error de backend
+          alert("No tienes permisos para ver los productos o hubo un error en el servidor.");
+          return [];
+        }
+        const text = await res.text();
+        return text ? JSON.parse(text) : [];
+      })
       .then(setProducts)
       .finally(() => setLoadingProducts(false));
   }, [status, session]);
@@ -129,6 +140,7 @@ export default function AdminPage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-[#C6FF00]">Panel de Administración</h1>
         <div className="flex gap-4">
+          <span className="text-sm text-gray-400">Usuario: {session?.user?.email} | Rol: {session?.user?.role}</span>
           <button
             onClick={() => router.push('/admin/products')}
             className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold px-6 py-3 rounded-lg transition-colors"
@@ -164,7 +176,6 @@ export default function AdminPage() {
                 <input type="file" accept="image/*" onChange={e => {
                   const file = e.target.files?.[0];
                   if (file) {
-                    setAnnouncementImageFile(file);
                     handleImageUpload(file, setAnnouncementImage);
                   }
                 }} />
@@ -237,7 +248,6 @@ export default function AdminPage() {
               <input type="file" accept="image/*" onChange={e => {
                 const file = e.target.files?.[0];
                 if (file) {
-                  setBancolombiaQrFile(file);
                   handleImageUpload(file, setBancolombiaQr);
                 }
               }} />
@@ -249,4 +259,4 @@ export default function AdminPage() {
       </div>
     </div>
   );
-} 
+}

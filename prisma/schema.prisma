@@ -93,7 +93,6 @@ model Product {
   comparePrice Decimal? @db.Decimal(10, 2)
   images      String[]
   sku         String    @unique
-  stock       Int       @default(0)
   isActive    Boolean   @default(true)
   isFeatured  Boolean   @default(false)
   slug        String    @unique

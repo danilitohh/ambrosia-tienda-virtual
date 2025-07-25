@@ -31,8 +31,7 @@ export async function GET(req: NextRequest) {
             id: true,
             name: true,
             price: true,
-            images: true,
-            stock: true
+            images: true
           }
         } 
       },
@@ -44,8 +43,7 @@ export async function GET(req: NextRequest) {
       name: item.product.name,
       price: Number(item.product.price),
       quantity: item.quantity,
-      image: item.product.images[0] || null,
-      inStock: (item.product.stock || 0) > 0
+      image: item.product.images[0] || null
     }));
 
     return NextResponse.json({ items });

@@ -57,6 +57,7 @@ export default function ProductsPage() {
     const product = products.find(p => p.id === id);
     if (!product) return;
 
+    // No permitir más de lo disponible
     if (value < 1) value = 1;
     
     setQuantities((prev) => ({ ...prev, [id]: value }));
@@ -64,21 +65,7 @@ export default function ProductsPage() {
 
   const handleAddToCart = useCallback(async (product: Product) => {
     const quantity = quantities[product.id] || 1;
-    const currentCartQuantity = getCurrentCartQuantity(product.id);
-    
-    // Validar stock disponible
-    if (currentCartQuantity + quantity > product.stock) {
-      addToast({
-        type: "error",
-        title: "Stock insuficiente",
-        message: `Solo quedan ${product.stock - currentCartQuantity} unidades disponibles.`,
-        duration: 4000,
-      });
-      return;
-    }
-
     setAddingToCart(prev => ({ ...prev, [product.id]: true }));
-
     try {
       addItem({ 
         id: product.id,
@@ -88,10 +75,7 @@ export default function ProductsPage() {
         quantity,
         image: product.images?.[0] || ""
       });
-
-      // Mostrar feedback visual
       setAddedToCart(prev => ({ ...prev, [product.id]: true }));
-      
       addToast({
         type: "success",
         title: "¡Producto agregado al carrito!",
@@ -99,14 +83,11 @@ export default function ProductsPage() {
         imageUrl: product.images?.[0] || "",
         duration: 3500,
       });
-
-      // Resetear cantidad después de agregar
       setTimeout(() => {
         setQuantities(prev => ({ ...prev, [product.id]: 1 }));
         setAddedToCart(prev => ({ ...prev, [product.id]: false }));
       }, 2000);
-
-    } catch {
+    } catch (error) {
       addToast({
         type: "error",
         title: "Error",
@@ -116,7 +97,7 @@ export default function ProductsPage() {
     } finally {
       setAddingToCart(prev => ({ ...prev, [product.id]: false }));
     }
-  }, [addItem, addToast, quantities, getCurrentCartQuantity]);
+  }, [addItem, addToast, quantities]);
 
   const memoizedProducts = useMemo(() => products, [products]);
 
@@ -143,40 +124,83 @@ export default function ProductsPage() {
           <p className="text-gray-300">Descubre nuestra amplia selección de productos</p>
         </div>
         <div className="rounded-lg p-6 mb-8 bg-black">
-          {/* Eliminada la barra de búsqueda de productos */}
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <input
+                  type="text"
+                  placeholder="Buscar productos..."
+                  className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C6FF00] focus:border-[#C6FF00]"
+                />
+              </div>
+            </div>
+            {/* Eliminado el select de 'Ordenar por' */}
+          </div>
         </div>
         <div className="space-y-6">
           {loading ? (
             <div className="text-center text-white">Cargando productos...</div>
           ) : memoizedProducts.map((product) => {
+            const currentCartQuantity = getCurrentCartQuantity(product.id);
             const isAdding = addingToCart[product.id];
             const isAdded = addedToCart[product.id];
             return (
-              <div key={product.id} className="flex flex-col md:flex-row items-center bg-[#181818] border border-[#222] rounded-lg overflow-hidden shadow-lg p-4 gap-6">
-                {/* Imagen a la izquierda */}
-                <div className="flex-shrink-0 w-40 h-40 flex items-center justify-center bg-gray-900 rounded-lg">
-                  <Image src={product.images?.[0] || "/producto1.jpeg"} alt={product.name} width={160} height={160} className="object-contain w-full h-full" loading="lazy" />
+              <div key={product.id} className="rounded-lg overflow-hidden bg-[#181818] border border-[#222] flex flex-col">
+                <div className="relative w-full aspect-[16/9] bg-gray-900 flex items-center justify-center">
+                  <Image
+                    src={product.images?.[0] || "/producto1.jpeg"}
+                    alt={product.name}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                  {/* Badge de stock si lo deseas */}
                 </div>
-                {/* Info a la derecha */}
-                <div className="flex-1 flex flex-col gap-2">
-                  <span className="text-xl font-bold text-[#C6FF00] mb-1">{product.name}</span>
-                  {/* Eliminar calificación y estrellas */}
-                  <span className="text-xs text-gray-400 uppercase tracking-wide">{typeof product.category === 'object' ? product.category?.name : product.category}</span>
-                  <span className="text-gray-300 mb-2">{product.description}</span>
-                  <span className="text-2xl font-bold text-white mb-2">${product.price.toLocaleString("es-CO")}</span>
-                  <div className="flex items-center gap-2 mt-2">
+                <div className="p-4 flex flex-col flex-1">
+                  <span className="text-lg font-bold text-white mb-2 text-center">{product.name}</span>
+                  <div className="mb-2">
+                    <span className="text-xs text-gray-400 uppercase tracking-wide">
+                      {typeof product.category === 'object' ? product.category?.name : product.category}
+                    </span>
+                  </div>
+                  <div className="flex items-center mb-3">
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${i < Math.floor(product.rating || 0) ? 'text-[#C6FF00] fill-current' : 'text-gray-700'}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-gray-400 ml-2">
+                      ({product.reviews || 0})
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xl font-bold" style={{ color: '#C6FF00' }}>
+                        ${product.price.toLocaleString("es-CO")}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2 items-center justify-center mt-2">
                     <input
                       type="number"
                       min={1}
-                      value={quantities[product.id] || 1}
+                      value={Number.isFinite(quantities[product.id]) ? quantities[product.id] : 1}
                       onChange={e => handleQuantityChange(product.id, Math.max(1, Number(e.target.value)))}
-                      className="w-16 px-2 py-1 rounded bg-gray-800 border border-gray-700 text-white text-center focus:outline-none focus:ring-2 focus:ring-[#C6FF00]"
+                      className="w-14 px-2 py-1 rounded bg-gray-800 border border-gray-700 text-white text-center focus:outline-none focus:ring-2 focus:ring-[#C6FF00]"
                       style={{ minWidth: 0 }}
                     />
                     <button
                       disabled={isAdding}
                       onClick={() => handleAddToCart(product)}
-                      className={`font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm focus:outline-none focus:ring-0 focus:border-none active:outline-none active:ring-0 active:border-none ${isAdded ? 'bg-green-500 text-white' : 'bg-[#C6FF00] hover:bg-[#b2e600] text-black'}`}
+                      className={`font-medium py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm focus:outline-none focus:ring-0 focus:border-none active:outline-none active:ring-0 active:border-none ${
+                        isAdded 
+                          ? 'bg-green-500 text-white' 
+                          : 'bg-[#C6FF00] hover:bg-[#b2e600] text-black'
+                      }`}
                       style={{ minWidth: 'auto', outline: 'none', boxShadow: 'none', border: 'none' }}
                     >
                       {isAdded ? (
@@ -204,5 +228,5 @@ export default function ProductsPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

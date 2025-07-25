@@ -225,9 +225,12 @@ export default function CustomCheckout() {
                   style={{ background: '#23272a' }}
                 />
               </div>
-              <div className="flex justify-between py-2 border-t border-gray-700 mt-2 text-lg font-bold">
-                <span>Total a pagar</span>
-                <span>${(total + propina).toLocaleString('es-CO')}</span>
+              <div className="flex justify-between font-bold">
+                <span>Total a pagar:</span>
+                <span>${total.toLocaleString("es-CO")}</span>
+              </div>
+              <div className="text-center text-yellow-400 text-sm mt-2">
+                * El valor del domicilio no está incluido. Te informaremos el costo exacto por WhatsApp.
               </div>
             </div>
             {paymentSettings.bancolombiaQr && (

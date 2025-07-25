@@ -34,7 +34,11 @@ async function migrateData() {
         })
         console.log(`✅ Categoría migrada: ${category.name}`)
       } catch (error) {
+        if (error instanceof Error) {
         console.log(`⚠️ Error migrando categoría ${category.name}:`, error.message)
+        } else {
+          console.log(`⚠️ Error migrando categoría ${category.name}:`, error)
+        }
       }
     }
 
@@ -52,7 +56,11 @@ async function migrateData() {
         })
         console.log(`✅ Producto migrado: ${product.name}`)
       } catch (error) {
+        if (error instanceof Error) {
         console.log(`⚠️ Error migrando producto ${product.name}:`, error.message)
+        } else {
+          console.log(`⚠️ Error migrando producto ${product.name}:`, error)
+        }
       }
     }
 
@@ -70,7 +78,11 @@ async function migrateData() {
         })
         console.log(`✅ Configuración migrada: ID ${setting.id}`)
       } catch (error) {
+        if (error instanceof Error) {
         console.log(`⚠️ Error migrando configuración ID ${setting.id}:`, error.message)
+        } else {
+          console.log(`⚠️ Error migrando configuración ID ${setting.id}:`, error)
+        }
       }
     }
 

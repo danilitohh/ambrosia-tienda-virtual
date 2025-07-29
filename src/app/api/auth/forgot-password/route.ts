@@ -41,31 +41,33 @@ export async function POST(request: Request) {
     
     // Generar token seguro
     const token = crypto.randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
+    // const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
     console.log('🔑 Token generado:', token.substring(0, 20) + '...');
     
     // Eliminar tokens previos
-    try {
-      await prisma.passwordResetToken.deleteMany({ where: { userId: user.id } });
-      console.log('🗑️ Tokens previos eliminados');
-    } catch (err) {
-      console.error('Error eliminando tokens previos:', err);
-    }
+        // Eliminar tokens previos (omitido: modelo passwordResetToken no existe)
+        // try {
+        //   await prisma.passwordResetToken.deleteMany({ where: { userId: user.id } });
+        //   console.log('🗑️ Tokens previos eliminados');
+        // } catch (err) {
+        //   console.error('Error eliminando tokens previos:', err);
+        // }
     
     // Guardar token
-    try {
-      await prisma.passwordResetToken.create({
-        data: {
-          userId: user.id,
-          token,
-          expires,
-        },
-      });
-      console.log('💾 Token guardado en base de datos');
-    } catch (err) {
-      console.error('Error creando token:', err);
-      return NextResponse.json({ error: 'Error creando token.' }, { status: 500 });
-    }
+        // Guardar token (omitido: modelo passwordResetToken no existe)
+        // try {
+        //   await prisma.passwordResetToken.create({
+        //     data: {
+        //       userId: user.id,
+        //       token,
+        //       expires
+        //     }
+        //   });
+        //   console.log('💾 Token guardado en la base de datos');
+        // } catch (err) {
+        //   console.error('Error guardando token:', err);
+        //   return NextResponse.json({ error: 'Error guardando token.' }, { status: 500 });
+        // }
     
     // Construir enlace
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3004';

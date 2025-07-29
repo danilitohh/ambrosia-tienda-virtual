@@ -85,6 +85,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Buscar todos los códigos
     const promoCodes = await prisma.promoCode.findMany({
       include: {
         product: {
@@ -100,7 +101,41 @@ export async function GET() {
       }
     });
 
-    return NextResponse.json(promoCodes);
+    // Obtener los IDs de los expirados y activos
+    const now = new Date();
+    const expiredIds = promoCodes
+      .filter(code => code.isActive && code.expiresAt && new Date(code.expiresAt) < now)
+      .map(code => code.id);
+
+    // Desactivar los expirados en la base de datos
+    if (expiredIds.length > 0) {
+      await prisma.promoCode.updateMany({
+        where: {
+          id: { in: expiredIds }
+        },
+        data: {
+          isActive: false
+        }
+      });
+    }
+
+    // Volver a consultar para devolver el estado actualizado
+    const freshPromoCodes = await prisma.promoCode.findMany({
+      include: {
+        product: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    return NextResponse.json(freshPromoCodes);
   } catch (error) {
     console.error('Error fetching promo codes:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -171,7 +171,7 @@ export default function AdminPage() {
               <div className="mb-2">
                 <label className="block mb-1">Imagen del anuncio:</label>
                 {announcementImage && (
-                  <Image src={announcementImage} alt="Anuncio" width={200} height={120} className="mb-2 rounded" />
+                  <Image src={announcementImage} alt="Anuncio" width={200} height={120} className="mb-2 rounded img-anuncio" />
                 )}
                 <input type="file" accept="image/*" onChange={e => {
                   const file = e.target.files?.[0];
@@ -180,6 +180,14 @@ export default function AdminPage() {
                   }
                 }} />
               </div>
+              <style jsx global>{`
+                .img-anuncio {
+                  width: 200px;
+                  height: auto;
+                  max-width: 100%;
+                  display: block;
+                }
+              `}</style>
               <button type="submit" className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold py-2 px-6 rounded-lg mt-2" disabled={savingSettings}>Guardar</button>
               {settingsMsg && <div className="mt-2 text-sm text-[#C6FF00]">{settingsMsg}</div>}
             </form>

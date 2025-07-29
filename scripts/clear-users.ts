@@ -6,7 +6,7 @@ async function main() {
   // Eliminar en orden para evitar errores de clave foránea
   await prisma.account.deleteMany();
   await prisma.session.deleteMany();
-  await prisma.passwordResetToken.deleteMany();
+  // await prisma.passwordResetToken.deleteMany(); // Modelo no existe
   await prisma.user.deleteMany();
   
   console.log('✅ Todas las cuentas eliminadas exitosamente!');

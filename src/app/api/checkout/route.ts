@@ -20,30 +20,9 @@ export async function POST(req: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
   }
-  const cartItems = await prisma.cartItem.findMany({
-    where: { userId: user.id },
-    include: { product: true },
-  });
-  if (cartItems.length === 0) {
-    return NextResponse.json({ error: "El carrito está vacío" }, { status: 400 });
-  }
-  const line_items = cartItems.map((item) => ({
-    price_data: {
-      currency: "usd",
-      product_data: {
-        name: item.product.name,
-      },
-      unit_amount: Math.round(Number(item.product.price) * 100),
-    },
-    quantity: item.quantity,
-  }));
-  const stripeSession = await stripe!.checkout.sessions.create({
-    payment_method_types: ["card"],
-    line_items,
-    mode: "payment",
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`,
-    customer_email: user.email,
-  });
-  return NextResponse.json({ url: stripeSession.url });
+  // El modelo cartItem no existe, por lo tanto no se puede procesar el checkout
+  // Si deseas implementar esta funcionalidad, primero crea el modelo cartItem en tu esquema de Prisma y ejecuta una migración.
+  return NextResponse.json({ 
+    error: "Funcionalidad no disponible: el modelo cartItem no existe en la base de datos." 
+  }, { status: 501 });
 } 

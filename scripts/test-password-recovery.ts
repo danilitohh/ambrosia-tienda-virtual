@@ -25,30 +25,29 @@ async function testPasswordRecovery() {
       console.log(`   ${index + 1}. ${user.name || 'Sin nombre'} (${user.email}) - ID: ${user.id}`);
     });
 
-    // 2. Verificar tokens de recuperación existentes
-    console.log('\n2. 🔑 Verificando tokens de recuperación existentes...');
-    const existingTokens = await prisma.passwordResetToken.findMany({
-      include: {
-        user: {
-          select: {
-            email: true,
-            name: true
-          }
-        }
-      }
-    });
-
-    if (existingTokens.length > 0) {
-      console.log(`⚠️  Encontrados ${existingTokens.length} tokens de recuperación:`);
-      existingTokens.forEach((token, index) => {
-        const isExpired = token.expires < new Date();
-        console.log(`   ${index + 1}. Usuario: ${token.user.name || 'Sin nombre'} (${token.user.email})`);
-        console.log(`      Token: ${token.token.substring(0, 20)}...`);
-        console.log(`      Expira: ${token.expires.toLocaleString()} ${isExpired ? '❌ EXPIRADO' : '✅ VÁLIDO'}`);
-      });
-    } else {
-      console.log('✅ No hay tokens de recuperación activos');
-    }
+    // 2. Verificar tokens de recuperación existentes (omitido: modelo passwordResetToken no existe)
+    // console.log('\n2. 🔑 Verificando tokens de recuperación existentes...');
+    // const existingTokens = await prisma.passwordResetToken.findMany({
+    //   include: {
+    //     user: {
+    //       select: {
+    //         email: true,
+    //         name: true
+    //       }
+    //     }
+    //   }
+    // });
+    // if (existingTokens.length > 0) {
+    //   console.log(`⚠️  Encontrados ${existingTokens.length} tokens de recuperación:`);
+    //   existingTokens.forEach((token, index) => {
+    //     const isExpired = token.expires < new Date();
+    //     console.log(`   ${index + 1}. Usuario: ${token.user.name || 'Sin nombre'} (${token.user.email})`);
+    //     console.log(`      Token: ${token.token.substring(0, 20)}...`);
+    //     console.log(`      Expira: ${token.expires.toLocaleString()} ${isExpired ? '❌ EXPIRADO' : '✅ VÁLIDO'}`);
+    //   });
+    // } else {
+    //   console.log('✅ No hay tokens de recuperación activos');
+    // }
 
     // 3. Probar búsqueda de usuario por email
     console.log('\n3. 🔍 Probando búsqueda de usuario por email...');

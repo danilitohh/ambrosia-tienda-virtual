@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link"
-import { ShoppingCart, Check } from "lucide-react"
+import { ShoppingCart, Check } from "lucide-react";
 import { UserMenu } from "@/components/ui/user-menu";
 import { CartIndicator } from "@/components/ui/cart-indicator";
 import { useCart } from "@/components/providers/cart-provider";
@@ -23,7 +23,7 @@ type Product = {
 };
 
 export default function ProductsPage() {
-  const { addItem, items } = useCart();
+  const { addItem } = useCart();
   const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
   const [addingToCart, setAddingToCart] = useState<{ [id: string]: boolean }>({});
   const [addedToCart, setAddedToCart] = useState<{ [id: string]: boolean }>({});
@@ -47,11 +47,6 @@ export default function ProductsPage() {
     fetchProducts();
   }, []);
 
-  // Obtener cantidad actual en el carrito para cada producto
-  const getCurrentCartQuantity = useCallback((productId: string) => {
-    const cartItem = items.find(item => item.id === productId);
-    return cartItem ? cartItem.quantity : 0;
-  }, [items]);
 
   const handleQuantityChange = useCallback((id: string, value: number) => {
     const product = products.find(p => p.id === id);
@@ -88,13 +83,14 @@ export default function ProductsPage() {
         setAddedToCart(prev => ({ ...prev, [product.id]: false }));
       }, 2000);
     } catch (error) {
-      addToast({
-        type: "error",
-        title: "Error",
-        message: "No se pudo agregar el producto al carrito.",
-        duration: 4000,
-      });
-    } finally {
+  console.error("Add to cart error:", error);
+  addToast({
+    type: "error",
+    title: "Error",
+    message: "No se pudo agregar el producto al carrito.",
+    duration: 4000,
+  });
+} finally {
       setAddingToCart(prev => ({ ...prev, [product.id]: false }));
     }
   }, [addItem, addToast, quantities]);
@@ -123,31 +119,17 @@ export default function ProductsPage() {
           <h1 className="text-3xl font-bold mb-2 text-[#C6FF00]">Productos</h1>
           <p className="text-gray-300">Descubre nuestra amplia selección de productos</p>
         </div>
-        <div className="rounded-lg p-6 mb-8 bg-black">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <input
-                  type="text"
-                  placeholder="Buscar productos..."
-                  className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C6FF00] focus:border-[#C6FF00]"
-                />
-              </div>
-            </div>
-            {/* Eliminado el select de 'Ordenar por' */}
-          </div>
-        </div>
+        {/* Barra de búsqueda eliminada */}
         <div className="space-y-6">
           {loading ? (
             <div className="text-center text-white">Cargando productos...</div>
           ) : memoizedProducts.map((product) => {
-            const currentCartQuantity = getCurrentCartQuantity(product.id);
             const isAdding = addingToCart[product.id];
             const isAdded = addedToCart[product.id];
             return (
-              <div key={product.id} className="rounded-lg overflow-hidden bg-[#181818] border border-[#222] flex flex-col">
-                <div className="relative w-full aspect-[16/9] bg-gray-900 flex items-center justify-center">
+              <div key={product.id} className="rounded-lg overflow-hidden bg-[#181818] border border-[#222] flex flex-row md:flex-row items-stretch">
+                {/* Imagen a la izquierda */}
+                <div className="relative w-1/2 min-w-[200px] max-w-[320px] aspect-[16/9] bg-gray-900 flex items-center justify-center">
                   <Image
                     src={product.images?.[0] || "/producto1.jpeg"}
                     alt={product.name}
@@ -155,36 +137,35 @@ export default function ProductsPage() {
                     className="object-contain"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
-                  {/* Badge de stock si lo deseas */}
                 </div>
-                <div className="p-4 flex flex-col flex-1">
-                  <span className="text-lg font-bold text-white mb-2 text-center">{product.name}</span>
-                  <div className="mb-2">
-                    <span className="text-xs text-gray-400 uppercase tracking-wide">
-                      {typeof product.category === 'object' ? product.category?.name : product.category}
-                    </span>
-                  </div>
-                  <div className="flex items-center mb-3">
-                    <div className="flex items-center">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-4 w-4 ${i < Math.floor(product.rating || 0) ? 'text-[#C6FF00] fill-current' : 'text-gray-700'}`}
-                        />
-                      ))}
+                {/* Info a la derecha */}
+                <div className="p-4 flex flex-col flex-1 justify-between">
+                  <div>
+                    <span className="text-lg font-bold text-white mb-2 block">{product.name}</span>
+                    <div className="mb-2">
+                      <span className="text-xs text-gray-400 uppercase tracking-wide">
+                        {typeof product.category === 'object' ? product.category?.name : product.category}
+                      </span>
                     </div>
-                    <span className="text-sm text-gray-400 ml-2">
-                      ({product.reviews || 0})
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-2">
+                  {/* Calificación eliminada */}
+                    <div className="mb-4">
                       <span className="text-xl font-bold" style={{ color: '#C6FF00' }}>
                         ${product.price.toLocaleString("es-CO")}
                       </span>
                     </div>
+                    <div className="mb-4 text-gray-300 text-sm whitespace-pre-line">
+                      {product.description}
+                    </div>
                   </div>
-                  <div className="flex space-x-2 items-center justify-center mt-2">
+                  <div className="flex items-center gap-2 mt-2">
+                    <button
+                      type="button"
+                      className="bg-gray-700 hover:bg-gray-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg"
+                      onClick={() => handleQuantityChange(product.id, Math.max(1, (quantities[product.id] || 1) - 1))}
+                      aria-label="Disminuir cantidad"
+                    >
+                      -
+                    </button>
                     <input
                       type="number"
                       min={1}
@@ -193,6 +174,14 @@ export default function ProductsPage() {
                       className="w-14 px-2 py-1 rounded bg-gray-800 border border-gray-700 text-white text-center focus:outline-none focus:ring-2 focus:ring-[#C6FF00]"
                       style={{ minWidth: 0 }}
                     />
+                    <button
+                      type="button"
+                      className="bg-gray-700 hover:bg-gray-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg"
+                      onClick={() => handleQuantityChange(product.id, (quantities[product.id] || 1) + 1)}
+                      aria-label="Aumentar cantidad"
+                    >
+                      +
+                    </button>
                     <button
                       disabled={isAdding}
                       onClick={() => handleAddToCart(product)}

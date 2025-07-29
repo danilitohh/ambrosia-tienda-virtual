@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 // GET: Obtener el carrito del usuario autenticado
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
@@ -23,30 +23,29 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ items: [] });
     }
 
-    const cartItems = await prisma.cartItem.findMany({
-      where: { userId: user.id },
-      include: { 
-        product: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-            images: true
-          }
-        } 
-      },
-      orderBy: { createdAt: 'desc' }
-    });
-
-    const items = cartItems.map((item) => ({
-      id: item.productId,
-      name: item.product.name,
-      price: Number(item.product.price),
-      quantity: item.quantity,
-      image: item.product.images[0] || null
-    }));
-
-    return NextResponse.json({ items });
+    // El modelo cartItem no existe, devolvemos carrito vacío
+    // const cartItems = await prisma.cartItem.findMany({
+    //   where: { userId: user.id },
+    //   include: { 
+    //     product: {
+    //       select: {
+    //         id: true,
+    //         name: true,
+    //         price: true,
+    //         images: true
+    //       }
+    //     } 
+    //   },
+    //   orderBy: { createdAt: 'desc' }
+    // });
+    // const items = cartItems.map((item) => ({
+    //   id: item.productId,
+    //   name: item.product.name,
+    //   price: Number(item.product.price),
+    //   quantity: item.quantity,
+    //   image: item.product.images[0] || null
+    // }));
+    return NextResponse.json({ items: [] });
   } catch (error) {
     console.error("Error obteniendo carrito:", error);
     return NextResponse.json(
@@ -121,33 +120,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Usar transacción para asegurar consistencia
-    await prisma.$transaction(async (tx) => {
-      // Eliminar los items actuales
-      await tx.cartItem.deleteMany({ 
-        where: { userId: user.id } 
-      });
-
-      // Agregar los nuevos items
-      for (const item of items) {
-        await tx.cartItem.create({
-          data: {
-            userId: user.id,
-            productId: item.id,
-            quantity: item.quantity,
-          },
-        });
-      }
-    });
-
+    // El modelo cartItem no existe, por lo tanto no se puede actualizar el carrito
+    // Si deseas implementar esta funcionalidad, primero crea el modelo cartItem en tu esquema de Prisma y ejecuta una migración.
     return NextResponse.json({ 
-      success: true, 
-      message: "Carrito actualizado correctamente" 
-    });
+      error: "Funcionalidad no disponible: el modelo cartItem no existe en la base de datos." 
+    }, { status: 501 });
   } catch (error) {
     console.error("Error actualizando carrito:", error);
     // Manejo seguro del error de clave foránea
-    if (typeof error === 'object' && error !== null && 'code' in error && (error as any).code === 'P2003') {
+    type PrismaError = { code: string };
+    if (typeof error === 'object' && error !== null && 'code' in error && (error as PrismaError).code === 'P2003') {
       // Prisma error de clave foránea
       return NextResponse.json(
         { error: "Uno de los productos no existe en la base de datos." },
@@ -162,7 +144,7 @@ export async function POST(req: NextRequest) {
 }
 
 // DELETE: Limpiar el carrito del usuario
-export async function DELETE(req: NextRequest) {
+export async function DELETE() {
   try {
     const session = await getServerSession(authOptions);
     
@@ -184,14 +166,12 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    await prisma.cartItem.deleteMany({ 
-      where: { userId: user.id } 
-    });
+    // El modelo cartItem no existe, por lo tanto no se puede limpiar el carrito
+    // Si deseas implementar esta funcionalidad, primero crea el modelo cartItem en tu esquema de Prisma y ejecuta una migración.
 
     return NextResponse.json({ 
-      success: true, 
-      message: "Carrito limpiado correctamente" 
-    });
+      error: "Funcionalidad no disponible: el modelo cartItem no existe en la base de datos." 
+    }, { status: 501 });
   } catch (error) {
     console.error("Error limpiando carrito:", error);
     return NextResponse.json(

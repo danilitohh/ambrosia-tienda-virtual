@@ -1,12 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../src/generated/prisma"
   binaryTargets = ["native", "linux-musl"]
 }
 
@@ -21,15 +15,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id])
 
   @@unique([provider, providerAccountId])
 }
@@ -39,30 +32,27 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id])
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  password      String?
-  emailVerified DateTime?
-  image         String?
-  role          UserRole  @default(CUSTOMER)
-  phone         String?
+  id               String    @id @default(cuid())
+  name             String?
+  email            String?   @unique
+  emailVerified    DateTime?
+  image            String?
+  phone            String?
+  address          String?
+  city             String?
+  department       String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  password         String?
+  role             String?   @default("CUSTOMER")
   securityQuestion String?
   securityAnswer   String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  accounts      Account[]
-  sessions      Session[]
-  orders        Order[]
-  cartItems     CartItem[]
-  addresses     Address[]
-  reviews       Review[]
-  passwordResetTokens PasswordResetToken[]
+  accounts         Account[]
+  sessions         Session[]
 }
 
 model VerificationToken {
@@ -81,164 +71,53 @@ model Category {
   slug        String    @unique
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
   products    Product[]
 }
 
 model Product {
-  id          String    @id @default(cuid())
-  name        String
-  description String
-  price       Decimal   @db.Decimal(10, 2)
-  comparePrice Decimal? @db.Decimal(10, 2)
-  images      String[]
-  sku         String    @unique
-  isActive    Boolean   @default(true)
-  isFeatured  Boolean   @default(false)
-  slug        String    @unique
-  weight      Float?
-  dimensions  String?
-  categoryId  String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  category    Category    @relation(fields: [categoryId], references: [id])
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
-  reviews     Review[]
-  promoCodes  PromoCode[]
-}
-
-model CartItem {
-  id        String   @id @default(cuid())
-  quantity  Int
-  userId    String
-  productId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, productId])
-}
-
-model Order {
-  id            String        @id @default(cuid())
-  orderNumber   String        @unique
-  userId        String
-  status        OrderStatus   @default(PENDING)
-  total         Decimal       @db.Decimal(10, 2)
-  subtotal      Decimal       @db.Decimal(10, 2)
-  tax           Decimal       @db.Decimal(10, 2)
-  shipping      Decimal       @db.Decimal(10, 2)
-  discount      Decimal       @db.Decimal(10, 2) @default(0)
-  paymentStatus PaymentStatus @default(PENDING)
-  paymentMethod String?
-  shippingAddressId String?
-  billingAddressId String?
-  promoCodeId   String?
-  notes         String?
-  trackingNumber String?
-  estimatedDelivery DateTime?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-
-  user            User         @relation(fields: [userId], references: [id])
-  orderItems      OrderItem[]
-  shippingAddress Address?     @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
-  billingAddress  Address?     @relation("BillingAddress", fields: [billingAddressId], references: [id])
-  promoCode       PromoCode?   @relation("PromoCodeOrders", fields: [promoCodeId], references: [id])
-}
-
-model OrderItem {
-  id        String   @id @default(cuid())
-  orderId   String
-  productId String
-  quantity  Int
-  price     Decimal @db.Decimal(10, 2)
-  createdAt DateTime @default(now())
-
-  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id])
-}
-
-model Address {
-  id          String   @id @default(cuid())
-  userId      String
-  type        AddressType
-  firstName   String
-  lastName    String
-  company     String?
-  address1    String
-  address2    String?
-  city        String
-  state       String
-  postalCode  String
-  country     String
-  phone       String?
-  isDefault   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  shippingOrders  Order[] @relation("ShippingAddress")
-  billingOrders   Order[] @relation("BillingAddress")
-}
-
-model Review {
-  id        String   @id @default(cuid())
-  userId    String
-  productId String
-  rating    Int
-  title     String?
-  comment   String?
-  isVerified Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, productId])
-}
-
-model PasswordResetToken {
-  id        String   @id @default(cuid())
-  userId    String
-  token     String   @unique
-  expires   DateTime
-  createdAt DateTime @default(now())
-
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String      @id @default(cuid())
+  name         String
+  description  String
+  price        Decimal     @db.Decimal(10, 2)
+  comparePrice Decimal?    @db.Decimal(10, 2)
+  images       String[]
+  sku          String      @unique
+  isActive     Boolean     @default(true)
+  isFeatured   Boolean     @default(false)
+  slug         String      @unique
+  weight       Float?
+  dimensions   String?
+  categoryId   String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  category     Category    @relation(fields: [categoryId], references: [id])
+  promoCodes   PromoCode[]
 }
 
 model Settings {
-  id           Int      @id @default(autoincrement())
-  announcement String   @db.Text
-  announcementImage String? @db.Text
-  nequiNumber  String
+  id                Int      @id @default(autoincrement())
+  announcement      String
+  announcementImage String?
+  nequiNumber       String
   bancolombiaCuenta String
-  bancolombiaQr String? @db.Text
-  updatedAt    DateTime @updatedAt
+  bancolombiaQr     String?
+  updatedAt         DateTime @updatedAt
 }
 
 model PromoCode {
   id              String    @id @default(cuid())
   code            String    @unique
   description     String
-  discountPercent Int       // Porcentaje de descuento (ej: 10 para 10%)
-  productId       String    // Producto específico al que aplica
-  minQuantity     Int       // Cantidad mínima requerida
-  maxUses         Int?      // Máximo número de usos (null = ilimitado)
+  discountPercent Int
+  productId       String
+  minQuantity     Int
+  maxUses         Int?
   usedCount       Int       @default(0)
   isActive        Boolean   @default(true)
   expiresAt       DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
-
   product         Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
-  orders          Order[]   @relation("PromoCodeOrders")
 }
 
 enum UserRole {

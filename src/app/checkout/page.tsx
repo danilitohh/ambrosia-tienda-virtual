@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { sendEmail } from "@/lib/email";
+// import { sendEmail } from "@/lib/email";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/components/providers/cart-provider";
 import Image from "next/image";
 import WhatsAppMessageModal from "@/components/whatsapp-message-modal";
 import { Dialog } from "@headlessui/react";
+import Link from "next/link";
 
 const NEQUI_NUMERO = "3043013144";
 const WHATSAPP_NUM = "573235924705"; // +57 323 5924705
@@ -22,17 +23,10 @@ function generarNumeroOrden() {
 }
 
 export default function CustomCheckout() {
-  const { data: session, status } = useSession();
+
+  const { status } = useSession();
   const router = useRouter();
   const { items, total, appliedPromoCode, discount } = useCart();
-
-  // Redirigir si no está autenticado
-  if (status === "loading") return null;
-  if (!session) {
-    if (typeof window !== "undefined") router.replace("/auth/signin");
-    return null;
-  }
-
   const [step, setStep] = useState<"form" | "pago">("form");
   const [form, setForm] = useState({
     nombre: "",
@@ -54,8 +48,13 @@ export default function CustomCheckout() {
   });
   const [showShippingModal, setShowShippingModal] = useState(true);
 
+  // Permitir checkout como invitado (no redirigir si no hay sesión)
+  // Mostrar loading solo en el render, no condicionar hooks
+  const isLoading = status === "loading";
+
   // Cargar configuración de pagos
   useEffect(() => {
+    if (status === "loading") return;
     const loadPaymentSettings = async () => {
       try {
         const res = await fetch("/api/admin/settings");
@@ -71,9 +70,8 @@ export default function CustomCheckout() {
         console.error("Error cargando configuración de pagos:", error);
       }
     };
-
     loadPaymentSettings();
-  }, []);
+  }, [status]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -125,6 +123,8 @@ export default function CustomCheckout() {
 
 
 
+
+  if (isLoading) return null;
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -274,9 +274,9 @@ export default function CustomCheckout() {
               <br />
               Después de transferir, envía el comprobante para procesar tu pedido.
             </p>
-            <a href="/" className="mt-4 text-[#C6FF00] hover:text-[#b2e600] underline">Volver al inicio</a>
-          </div>
-        )}
+    <Link href="/" className="mt-4 text-[#C6FF00] hover:text-[#b2e600] underline">Volver al inicio</Link>
+  </div>
+)}
       </div>
 
       {/* Modal de WhatsApp */}

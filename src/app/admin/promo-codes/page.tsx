@@ -15,9 +15,6 @@ interface PromoCode {
   description: string;
   discountPercent: number;
   productId: string;
-  minQuantity: number;
-  maxUses: number | null;
-  usedCount: number;
   isActive: boolean;
   expiresAt: string | null;
   createdAt: string;
@@ -243,29 +240,7 @@ export default function PromoCodesPage() {
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Cantidad Mínima</label>
-              <input
-                type="number"
-                min="1"
-                value={formData.minQuantity}
-                onChange={(e) => setFormData({...formData, minQuantity: parseInt(e.target.value)})}
-                className="w-full px-3 py-2 bg-[#23272a] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#C6FF00]"
-                required
-              />
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Máximo de Usos (opcional)</label>
-              <input
-                type="number"
-                min="1"
-                value={formData.maxUses}
-                onChange={(e) => setFormData({...formData, maxUses: e.target.value})}
-                className="w-full px-3 py-2 bg-[#23272a] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#C6FF00]"
-                placeholder="Ilimitado si está vacío"
-              />
-            </div>
 
             <div>
               <label className="block text-sm font-medium mb-2">Fecha de Expiración (opcional)</label>
@@ -303,8 +278,8 @@ export default function PromoCodesPage() {
                     <th className="text-left py-3 px-2">Descripción</th>
                     <th className="text-left py-3 px-2">Descuento</th>
                     <th className="text-left py-3 px-2">Producto</th>
-                    <th className="text-left py-3 px-2">Cant. Mín.</th>
-                    <th className="text-left py-3 px-2">Usos</th>
+                    {/* <th className="text-left py-3 px-2">Cant. Mín.</th> */}
+                    {/* <th className="text-left py-3 px-2">Usos</th> */}
                     <th className="text-left py-3 px-2">Estado</th>
                     <th className="text-left py-3 px-2">Expira</th>
                     <th className="text-left py-3 px-2">Acciones</th>
@@ -317,11 +292,11 @@ export default function PromoCodesPage() {
                       <td className="py-3 px-2">{code.description}</td>
                       <td className="py-3 px-2">{code.discountPercent}%</td>
                       <td className="py-3 px-2">{code.product.name}</td>
-                      <td className="py-3 px-2">{code.minQuantity}</td>
-                      <td className="py-3 px-2">
+                      {/* <td className="py-3 px-2">{code.minQuantity}</td> */}
+                      {/* <td className="py-3 px-2">
                         {code.usedCount}
                         {code.maxUses && ` / ${code.maxUses}`}
-                      </td>
+                      </td> */}
                       <td className="py-3 px-2">
                         <span className={`px-2 py-1 rounded text-xs ${
                           code.isActive ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'

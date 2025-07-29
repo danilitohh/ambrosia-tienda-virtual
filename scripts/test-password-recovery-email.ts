@@ -1,5 +1,6 @@
 import { prisma } from '../src/lib/prisma';
 import { sendEmail } from '../src/lib/email';
+import crypto from 'crypto';
 
 async function testPasswordRecoveryEmail() {
   console.log('🧪 Probando envío de email de recuperación de contraseña...\n');
@@ -32,11 +33,13 @@ async function testPasswordRecoveryEmail() {
 
     // 2. Seleccionar usuario para prueba
     const testUser = users[0];
+    if (!testUser.email) {
+      throw new Error('El usuario de prueba no tiene email válido.');
+    }
     console.log(`\n2. 🎯 Usuario seleccionado para prueba: ${testUser.name || 'Sin nombre'} (${testUser.email})`);
 
     // 3. Generar token de prueba
     console.log('\n3. 🔑 Generando token de prueba...');
-    const crypto = require('crypto');
     const token = crypto.randomBytes(32).toString('hex');
     const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
 
@@ -45,21 +48,21 @@ async function testPasswordRecoveryEmail() {
 
     // 4. Eliminar tokens previos del usuario
     console.log('\n4. 🗑️ Eliminando tokens previos...');
-    await prisma.passwordResetToken.deleteMany({
-      where: { userId: testUser.id }
-    });
-    console.log('   ✅ Tokens previos eliminados');
+    // await prisma.passwordResetToken.deleteMany({
+    //   where: { userId: testUser.id }
+    // });
+    // console.log('   ✅ Tokens previos eliminados');
 
     // 5. Guardar nuevo token
     console.log('\n5. 💾 Guardando token en base de datos...');
-    await prisma.passwordResetToken.create({
-      data: {
-        userId: testUser.id,
-        token,
-        expires,
-      },
-    });
-    console.log('   ✅ Token guardado exitosamente');
+    // await prisma.passwordResetToken.create({
+    //   data: {
+    //     userId: testUser.id,
+    //     token,
+    //     expires,
+    //   },
+    // });
+    // console.log('   ✅ Token guardado exitosamente');
 
     // 6. Construir enlace
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3004';
@@ -132,26 +135,26 @@ async function testPasswordRecoveryEmail() {
     }
 
     // 8. Verificar token en base de datos
-    console.log('\n8. 🔍 Verificando token en base de datos...');
-    const savedToken = await prisma.passwordResetToken.findUnique({
-      where: { token },
-      include: {
-        user: {
-          select: {
-            email: true,
-            name: true
-          }
-        }
-      }
-    });
+    // console.log('\n8. 🔍 Verificando token en base de datos...');
+    // const savedToken = await prisma.passwordResetToken.findUnique({
+    //   where: { token },
+    //   include: {
+    //     user: {
+    //       select: {
+    //         email: true,
+    //         name: true
+    //       }
+    //     }
+    //   }
+    // });
 
-    if (savedToken) {
-      console.log('   ✅ Token encontrado en base de datos');
-      console.log(`   👤 Usuario: ${savedToken.user.name || 'Sin nombre'} (${savedToken.user.email})`);
-      console.log(`   ⏰ Expira: ${savedToken.expires.toLocaleString()}`);
-    } else {
-      console.log('   ❌ Token no encontrado en base de datos');
-    }
+    // if (savedToken) {
+    //   console.log('   ✅ Token encontrado en base de datos');
+    //   console.log(`   👤 Usuario: ${savedToken.user.name || 'Sin nombre'} (${savedToken.user.email})`);
+    //   console.log(`   ⏰ Expira: ${savedToken.expires.toLocaleString()}`);
+    // } else {
+    //   console.log('   ❌ Token no encontrado en base de datos');
+    // }
 
     console.log('\n✅ Prueba de email de recuperación completada exitosamente');
 

@@ -98,15 +98,15 @@ export default function ProductsPage() {
   const memoizedProducts = useMemo(() => products, [products]);
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black w-full">
       {/* Header */}
-      <header className="bg-black border-b border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-2xl font-bold text-[#C6FF00]">
+      <header className="bg-black border-b border-gray-700 w-full">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 w-full">
+          <div className="flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16 gap-2 w-full">
+            <Link href="/" className="text-xl sm:text-2xl font-bold text-[#C6FF00] text-center sm:text-left w-full sm:w-auto">
               Ambrosia
             </Link>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-center">
               <CartIndicator />
               <UserMenu />
             </div>
@@ -114,22 +114,22 @@ export default function ProductsPage() {
         </div>
       </header>
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 text-[#C6FF00]">Productos</h1>
-          <p className="text-gray-300">Descubre nuestra amplia selección de productos</p>
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 w-full">
+        <div className="mb-4 sm:mb-8 w-full">
+          <h1 className="text-xl sm:text-3xl font-bold mb-1 sm:mb-2 text-[#C6FF00] text-center sm:text-left">Productos</h1>
+          <p className="text-xs sm:text-base text-gray-300 text-center sm:text-left">Descubre nuestra amplia selección de productos</p>
         </div>
         {/* Barra de búsqueda eliminada */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6 w-full">
           {loading ? (
             <div className="text-center text-white">Cargando productos...</div>
           ) : memoizedProducts.map((product) => {
             const isAdding = addingToCart[product.id];
             const isAdded = addedToCart[product.id];
             return (
-              <div key={product.id} className="rounded-lg overflow-hidden bg-[#181818] border border-[#222] flex flex-row md:flex-row items-stretch">
+              <div key={product.id} className="rounded-lg overflow-hidden bg-[#181818] border border-[#222] flex flex-col md:flex-row items-stretch w-full">
                 {/* Imagen a la izquierda */}
-                <div className="relative w-1/2 min-w-[200px] max-w-[320px] aspect-[16/9] bg-gray-900 flex items-center justify-center">
+                <div className="relative w-full md:w-1/2 min-w-[160px] sm:min-w-[200px] max-w-full md:max-w-[320px] aspect-[16/9] bg-gray-900 flex items-center justify-center">
                   <Image
                     src={product.images?.[0] || "/producto1.jpeg"}
                     alt={product.name}
@@ -139,25 +139,24 @@ export default function ProductsPage() {
                   />
                 </div>
                 {/* Info a la derecha */}
-                <div className="p-4 flex flex-col flex-1 justify-between">
+                <div className="p-2 sm:p-4 flex flex-col flex-1 justify-between w-full">
                   <div>
-                    <span className="text-lg font-bold text-white mb-2 block">{product.name}</span>
-                    <div className="mb-2">
-                      <span className="text-xs text-gray-400 uppercase tracking-wide">
+                    <span className="text-base sm:text-lg font-bold text-white mb-1 sm:mb-2 block w-full text-center sm:text-left">{product.name}</span>
+                    <div className="mb-1 sm:mb-2">
+                      <span className="text-xs text-gray-400 uppercase tracking-wide w-full text-center sm:text-left block">
                         {typeof product.category === 'object' ? product.category?.name : product.category}
                       </span>
                     </div>
-                  {/* Calificación eliminada */}
-                    <div className="mb-4">
-                      <span className="text-xl font-bold" style={{ color: '#C6FF00' }}>
+                    <div className="mb-2 sm:mb-4">
+                      <span className="text-base sm:text-xl font-bold" style={{ color: '#C6FF00' }}>
                         ${product.price.toLocaleString("es-CO")}
                       </span>
                     </div>
-                    <div className="mb-4 text-gray-300 text-sm whitespace-pre-line">
+                    <div className="mb-2 sm:mb-4 text-gray-300 text-xs sm:text-sm whitespace-pre-line w-full">
                       {product.description}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 mt-2">
+                  <div className="flex flex-col sm:flex-row items-center gap-2 mt-2 w-full">
                     <button
                       type="button"
                       className="bg-gray-700 hover:bg-gray-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg"
@@ -171,7 +170,7 @@ export default function ProductsPage() {
                       min={1}
                       value={Number.isFinite(quantities[product.id]) ? quantities[product.id] : 1}
                       onChange={e => handleQuantityChange(product.id, Math.max(1, Number(e.target.value)))}
-                      className="w-14 px-2 py-1 rounded bg-gray-800 border border-gray-700 text-white text-center focus:outline-none focus:ring-2 focus:ring-[#C6FF00]"
+                      className="w-12 sm:w-14 px-2 py-1 rounded bg-gray-800 border border-gray-700 text-white text-center focus:outline-none focus:ring-2 focus:ring-[#C6FF00]"
                       style={{ minWidth: 0 }}
                     />
                     <button
@@ -185,7 +184,7 @@ export default function ProductsPage() {
                     <button
                       disabled={isAdding}
                       onClick={() => handleAddToCart(product)}
-                      className={`font-medium py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm focus:outline-none focus:ring-0 focus:border-none active:outline-none active:ring-0 active:border-none ${
+                      className={`font-medium py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-xs sm:text-sm focus:outline-none focus:ring-0 focus:border-none active:outline-none active:ring-0 active:border-none w-full sm:w-auto ${
                         isAdded 
                           ? 'bg-green-500 text-white' 
                           : 'bg-[#C6FF00] hover:bg-[#b2e600] text-black'

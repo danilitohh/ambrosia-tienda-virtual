@@ -136,33 +136,33 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-[#C6FF00]">Panel de Administración</h1>
-        <div className="flex gap-4">
-          <span className="text-sm text-gray-400">Usuario: {session?.user?.email} | Rol: {session?.user?.role}</span>
+    <div className="min-h-screen bg-black text-white p-2 sm:p-4 md:p-8 w-full">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#C6FF00] text-center md:text-left">Panel de Administración</h1>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center justify-center">
+          <span className="text-xs sm:text-sm text-gray-400">Usuario: {session?.user?.email} | Rol: {session?.user?.role}</span>
           <button
             onClick={() => router.push('/admin/products')}
-            className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold px-6 py-3 rounded-lg transition-colors"
+            className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-colors w-full sm:w-auto"
           >
             Gestionar Productos
           </button>
           <button
             onClick={() => router.push('/admin/promo-codes')}
-            className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold px-6 py-3 rounded-lg transition-colors"
+            className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-colors w-full sm:w-auto"
           >
             Gestionar Códigos Promocionales
           </button>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 w-full">
         {/* Anuncio */}
-        <section className="bg-[#181818] p-6 rounded-lg border border-[#C6FF00]">
-          <h2 className="text-xl font-semibold mb-4 text-[#C6FF00]">Editar anuncio principal</h2>
+        <section className="bg-[#181818] p-4 sm:p-6 rounded-lg border border-[#C6FF00] w-full overflow-x-auto">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4 text-[#C6FF00]">Editar anuncio principal</h2>
           {loadingSettings ? <div>Cargando...</div> : (
-            <form onSubmit={e => { e.preventDefault(); handleSaveSettings(); }}>
+            <form onSubmit={e => { e.preventDefault(); handleSaveSettings(); }} className="w-full">
               <textarea
-                className="w-full p-2 rounded bg-gray-800 border border-gray-700 text-white mb-2"
+                className="w-full p-2 rounded bg-gray-800 border border-gray-700 text-white mb-2 resize-none"
                 rows={3}
                 value={announcement}
                 onChange={e => setAnnouncement(e.target.value)}
@@ -171,14 +171,14 @@ export default function AdminPage() {
               <div className="mb-2">
                 <label className="block mb-1">Imagen del anuncio:</label>
                 {announcementImage && (
-                  <Image src={announcementImage} alt="Anuncio" width={200} height={120} className="mb-2 rounded img-anuncio" />
+                  <Image src={announcementImage} alt="Anuncio" width={200} height={120} className="mb-2 rounded img-anuncio" priority loading="lazy" />
                 )}
                 <input type="file" accept="image/*" onChange={e => {
                   const file = e.target.files?.[0];
                   if (file) {
                     handleImageUpload(file, setAnnouncementImage);
                   }
-                }} />
+                }} className="w-full" />
               </div>
               <style jsx global>{`
                 .img-anuncio {
@@ -188,21 +188,21 @@ export default function AdminPage() {
                   display: block;
                 }
               `}</style>
-              <button type="submit" className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold py-2 px-6 rounded-lg mt-2" disabled={savingSettings}>Guardar</button>
-              {settingsMsg && <div className="mt-2 text-sm text-[#C6FF00]">{settingsMsg}</div>}
+              <button type="submit" className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold py-2 px-4 sm:px-6 rounded-lg mt-2 w-full sm:w-auto" disabled={savingSettings}>Guardar</button>
+              {settingsMsg && <div className="mt-2 text-xs sm:text-sm text-[#C6FF00]">{settingsMsg}</div>}
             </form>
           )}
         </section>
         {/* Disponibilidad de productos */}
-        <section className="bg-[#181818] p-6 rounded-lg border border-[#C6FF00]">
-          <h2 className="text-xl font-semibold mb-4 text-[#C6FF00]">Disponibilidad de productos</h2>
+        <section className="bg-[#181818] p-4 sm:p-6 rounded-lg border border-[#C6FF00] w-full overflow-x-auto">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4 text-[#C6FF00]">Disponibilidad de productos</h2>
           {loadingProducts ? <div>Cargando...</div> : (
-            <ul>
+            <ul className="w-full">
               {products.map(product => (
-                <li key={product.id} className="flex items-center justify-between border-b border-gray-700 py-2">
-                  <span>{product.name}</span>
+                <li key={product.id} className="flex flex-col sm:flex-row items-center justify-between border-b border-gray-700 py-2 gap-2">
+                  <span className="w-full sm:w-auto text-center sm:text-left">{product.name}</span>
                   <button
-                    className={`px-4 py-1 rounded ${product.isActive ? 'bg-green-600' : 'bg-red-600'} text-white font-semibold ml-4`}
+                    className={`px-4 py-1 rounded ${product.isActive ? 'bg-green-600' : 'bg-red-600'} text-white font-semibold ml-0 sm:ml-4 w-full sm:w-auto`}
                     onClick={() => handleToggleProduct(product.id, !product.isActive)}
                     disabled={savingProductId === product.id}
                   >
@@ -214,53 +214,53 @@ export default function AdminPage() {
           )}
         </section>
         {/* Número de Nequi */}
-        <section className="bg-[#181818] p-6 rounded-lg border border-[#C6FF00]">
-          <h2 className="text-xl font-semibold mb-4 text-[#C6FF00]">Número de Nequi</h2>
+        <section className="bg-[#181818] p-4 sm:p-6 rounded-lg border border-[#C6FF00] w-full">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4 text-[#C6FF00]">Número de Nequi</h2>
           {loadingSettings ? <div>Cargando...</div> : (
-            <form onSubmit={e => { e.preventDefault(); handleSaveSettings(); }}>
+            <form onSubmit={e => { e.preventDefault(); handleSaveSettings(); }} className="w-full">
               <input
                 className="w-full p-2 rounded bg-gray-800 border border-gray-700 text-white mb-2"
                 value={nequiNumber}
                 onChange={e => setNequiNumber(e.target.value)}
                 placeholder="Número de Nequi"
               />
-              <button type="submit" className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold py-2 px-6 rounded-lg mt-2" disabled={savingSettings}>Guardar</button>
-              {settingsMsg && <div className="mt-2 text-sm text-[#C6FF00]">{settingsMsg}</div>}
+              <button type="submit" className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold py-2 px-4 sm:px-6 rounded-lg mt-2 w-full sm:w-auto" disabled={savingSettings}>Guardar</button>
+              {settingsMsg && <div className="mt-2 text-xs sm:text-sm text-[#C6FF00]">{settingsMsg}</div>}
             </form>
           )}
         </section>
         {/* Cuenta Bancolombia */}
-        <section className="bg-[#181818] p-6 rounded-lg border border-[#C6FF00]">
-          <h2 className="text-xl font-semibold mb-4 text-[#C6FF00]">Cuenta Bancolombia</h2>
+        <section className="bg-[#181818] p-4 sm:p-6 rounded-lg border border-[#C6FF00] w-full">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4 text-[#C6FF00]">Cuenta Bancolombia</h2>
           {loadingSettings ? <div>Cargando...</div> : (
-            <form onSubmit={e => { e.preventDefault(); handleSaveSettings(); }}>
+            <form onSubmit={e => { e.preventDefault(); handleSaveSettings(); }} className="w-full">
               <input
                 className="w-full p-2 rounded bg-gray-800 border border-gray-700 text-white mb-2"
                 value={bancolombiaCuenta}
                 onChange={e => setBancolombiaCuenta(e.target.value)}
                 placeholder="Número de cuenta Bancolombia"
               />
-              <button type="submit" className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold py-2 px-6 rounded-lg mt-2" disabled={savingSettings}>Guardar</button>
-              {settingsMsg && <div className="mt-2 text-sm text-[#C6FF00]">{settingsMsg}</div>}
+              <button type="submit" className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold py-2 px-4 sm:px-6 rounded-lg mt-2 w-full sm:w-auto" disabled={savingSettings}>Guardar</button>
+              {settingsMsg && <div className="mt-2 text-xs sm:text-sm text-[#C6FF00]">{settingsMsg}</div>}
             </form>
           )}
         </section>
         {/* QR Bancolombia */}
-        <section className="bg-[#181818] p-6 rounded-lg border border-[#C6FF00]">
-          <h2 className="text-xl font-semibold mb-4 text-[#C6FF00]">QR Bancolombia</h2>
+        <section className="bg-[#181818] p-4 sm:p-6 rounded-lg border border-[#C6FF00] w-full">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4 text-[#C6FF00]">QR Bancolombia</h2>
           {loadingSettings ? <div>Cargando...</div> : (
-            <form onSubmit={e => { e.preventDefault(); handleSaveSettings(); }}>
+            <form onSubmit={e => { e.preventDefault(); handleSaveSettings(); }} className="w-full">
               {bancolombiaQr && (
-                <Image src={bancolombiaQr} alt="QR Bancolombia" width={200} height={200} className="mb-2 rounded" />
+                <Image src={bancolombiaQr} alt="QR Bancolombia" width={200} height={200} className="mb-2 rounded" priority loading="lazy" />
               )}
               <input type="file" accept="image/*" onChange={e => {
                 const file = e.target.files?.[0];
                 if (file) {
                   handleImageUpload(file, setBancolombiaQr);
                 }
-              }} />
-              <button type="submit" className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold py-2 px-6 rounded-lg mt-2" disabled={savingSettings}>Guardar</button>
-              {settingsMsg && <div className="mt-2 text-sm text-[#C6FF00]">{settingsMsg}</div>}
+              }} className="w-full" />
+              <button type="submit" className="bg-[#C6FF00] hover:bg-[#b2e600] text-black font-semibold py-2 px-4 sm:px-6 rounded-lg mt-2 w-full sm:w-auto" disabled={savingSettings}>Guardar</button>
+              {settingsMsg && <div className="mt-2 text-xs sm:text-sm text-[#C6FF00]">{settingsMsg}</div>}
             </form>
           )}
         </section>

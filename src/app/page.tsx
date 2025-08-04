@@ -7,27 +7,7 @@ import { CartIndicator } from "@/components/ui/cart-indicator";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
-export const metadata = {
-  title: "Ambrosia - Tienda Virtual",
-  description: "Compra productos exclusivos en Ambrosia, tu tienda virtual de confianza.",
-  robots: "index, follow",
-  openGraph: {
-    title: "Ambrosia - Tienda Virtual",
-    description: "Compra productos exclusivos en Ambrosia, tu tienda virtual de confianza.",
-    url: "https://ambrosia-eosin.vercel.app/",
-    siteName: "Ambrosia",
-    images: [
-      {
-        url: "/logo-ambrosia-bhang.jpeg",
-        width: 800,
-        height: 600,
-        alt: "Ambrosia Logo",
-      },
-    ],
-    locale: "es_CO",
-    type: "website",
-  },
-};
+// ...metadata movida a layout.tsx para SEO correcto...
 
 export type Product = {
   id: string;

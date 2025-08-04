@@ -8,6 +8,7 @@ import { CartProvider } from '@/components/providers/cart-provider'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { ToasterProvider, Toaster } from '@/components/ui/toaster'
 
+// Removed duplicate default export of RootLayout
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {

@@ -158,91 +158,29 @@ Descuentos ................ $${discount ? discount.toLocaleString('es-CO') : '0.
 
 
   const enviarMensajeWhatsApp = async () => {
-    // Mensaje optimizado para WhatsApp (sin emojis en URL)
-        // Mensaje profesional para WhatsApp (opción 1: negritas y símbolos, sin emojis)
-        const mensaje = `*¡Hola!* Aquí está mi pedido:
-\n*=== MI PEDIDO ESPECIAL ===*
-\n*PRODUCTOS SELECCIONADOS:*
-${items.map(item => {
-  let nombre = item.name;
-  if (nombre.toLowerCase().includes('brownie')) {
-    nombre = nombre.replace(/chocolate/gi, '').replace(/\s+/g, ' ').trim();
-  }
-  let cantidad = '';
-  if (/de x\d+/i.test(nombre)) {
-    cantidad = '';
-  } else if (nombre.toLowerCase().includes('brownie')) {
-    cantidad = item.quantity > 1 ? `combo (x${item.quantity})` : 'x1';
-  } else if (nombre.toLowerCase().includes('galleta')) {
-    cantidad = 'combo (x6)';
-  } else if (nombre.toLowerCase().includes('trufa')) {
-    cantidad = 'combo (x6)';
-  } else if (nombre.toLowerCase().includes('chocolate')) {
-    cantidad = 'combo (x8)';
-  } else {
-    cantidad = `x${item.quantity}`;
-  }
-  let categoria = '[DULCE]';
-  if (nombre.toLowerCase().includes('brownie')) categoria = '[BROWNIE]';
-  if (nombre.toLowerCase().includes('galleta')) categoria = '[GALLETA]';
-  if (nombre.toLowerCase().includes('trufa')) categoria = '[TRUFA]';
-  if (nombre.toLowerCase().includes('chocolate')) categoria = '[CHOCOLATE]';
-  if (nombre.toLowerCase().includes('postre')) categoria = '[POSTRE]';
-  return `• ${categoria} ${nombre}${cantidad ? ' ' + cantidad : ''} - $${(item.price * item.quantity).toLocaleString('es-CO')}`;
-}).join('\n')}
-\n${appliedPromoCode ? `*DESCUENTO APLICADO*\n${appliedPromoCode.code} (-$${discount.toLocaleString('es-CO')})` : ''}
-\n${propina > 0 ? `*PROPINA*\nPropina para el equipo: $${propina.toLocaleString('es-CO')}` : ''}
-\n*=== RESUMEN ===*\nSubtotal: $${total.toLocaleString('es-CO')}\n*TOTAL A PAGAR: $${(total + propina).toLocaleString('es-CO')}*\n\n*=== DATOS DEL PEDIDO ===*\nNumero de orden: ${orderId}\nFecha: ${new Date().toLocaleDateString()}\nCliente: Tu nombre aqui\n\n*¡Gracias por elegirnos!*\nEntrega en 24-48 horas\nWhatsApp: +57 323 592 4705\n\n*AMBROSIA BHANG`;
-
+    // Mostrar cada producto como una línea por unidad seleccionada
+    const productosList: string[] = [];
+    let count = 1;
+    items.forEach(item => {
+      for (let i = 0; i < item.quantity; i++) {
+        productosList.push(`${count}. ${item.name} $${item.price.toLocaleString('es-CO')}`);
+        count++;
+      }
+    });
+    const mensaje = `SOLICITUD DE PEDIDO\n\nOrden generada: ${orderId}\n\nPRODUCTOS SOLICITADOS\n${productosList.join('\n')}\n\nRESUMEN FINANCIERO\nSubtotal ............. $${total.toLocaleString('es-CO')}\nDescuentos .......... $${discount ? discount.toLocaleString('es-CO') : '0.000'}\nTOTAL PARCIAL ........ $${total.toLocaleString('es-CO')}\n${propina > 0 ? `Propina para el equipo ....... $${propina.toLocaleString('es-CO')}` : ''}\n\nel precio del domicilio aun no está incluido\n\nINFORMACION IMPORTANTE\n\nEspera la confirmación del total con domicilio y la validación del pedido por parte del equipo Ambrosia.`;
     console.log('📱 Mensaje para WhatsApp:', mensaje);
 
     // Detectar dispositivo
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
     // Crear URLs sin problemas de codificación
     const mensajeCodificado = encodeURIComponent(mensaje);
     const urlWeb = `https://wa.me/${WHATSAPP_NUM}?text=${mensajeCodificado}`;
     const urlApp = `whatsapp://send?phone=${WHATSAPP_NUM}&text=${mensajeCodificado}`;
-    
     console.log('🔗 URL generada:', urlWeb.substring(0, 100) + '...');
-
-    // Función para mostrar los emojis después de abrir WhatsApp
-    const mostrarInstruccionesEmojis = () => {
-      setTimeout(() => {
-        const mensajeConEmojis = `🛍️ MI PEDIDO ESPECIAL 🛍️
-📋 PRODUCTOS SELECCIONADOS:
-${items.map(item => {
-          let nombre = item.name;
-          if (nombre.toLowerCase().includes('brownie')) {
-            nombre = nombre.replace(/chocolate/gi, '').replace(/\s+/g, ' ').trim();
-          }
-          let emoji = '🍪';
-          if (nombre.toLowerCase().includes('brownie')) emoji = '🍫';
-          if (nombre.toLowerCase().includes('galleta')) emoji = '🍪';
-          if (nombre.toLowerCase().includes('trufa')) emoji = '🍬';
-          if (nombre.toLowerCase().includes('chocolate')) emoji = '🍫';
-          return `• ${emoji} ${nombre} - $${(item.price * item.quantity).toLocaleString('es-CO')}`;
-        }).join('\n')}
-
-💰 TOTAL: $${(total + propina).toLocaleString('es-CO')}
-📋 Orden: ${orderId}
-🙏 ¡Gracias por elegirnos!`;
-
-        // Mostrar mensaje con emojis para copiar
-        if (confirm('¿Quieres copiar la versión con emojis para pegarla en WhatsApp?')) {
-          navigator.clipboard.writeText(mensajeConEmojis).then(() => {
-            alert('✅ ¡Mensaje con emojis copiado! Ahora pégalo en WhatsApp.');
-          }).catch(() => {
-            alert('❌ No se pudo copiar automáticamente. Aquí está el mensaje:\n\n' + mensajeConEmojis);
-          });
-        }
-      }, 3000);
-    };
 
     // Abrir WhatsApp
     try {
       if (isMobile) {
-        // Intentar app nativa primero
         const appWindow = window.open(urlApp, '_blank');
         setTimeout(() => {
           if (!appWindow || appWindow.closed) {
@@ -250,20 +188,13 @@ ${items.map(item => {
           }
         }, 1500);
       } else {
-        // Desktop: WhatsApp Web
         const webWindow = window.open(urlWeb, '_blank');
         if (!webWindow) {
           throw new Error('Popup bloqueado');
         }
       }
-      
-      // Mostrar opción de emojis después de abrir
-      mostrarInstruccionesEmojis();
-      
     } catch (error) {
       console.error('❌ Error:', error);
-      
-      // Fallback completo
       if (confirm('No se pudo abrir WhatsApp automáticamente. ¿Copiar mensaje al portapapeles?')) {
         navigator.clipboard.writeText(mensaje).then(() => {
           alert('✅ Mensaje copiado! Ve a WhatsApp y pégalo manualmente.');
@@ -438,47 +369,17 @@ ${items.map(item => {
       <WhatsAppMessageModal
         isOpen={showWhatsAppModal}
         onClose={() => setShowWhatsAppModal(false)}
-        message={`¡Hola! 😊 Aquí está mi pedido completo:
-
-🛒 MI PEDIDO ESPECIAL
-🍪 Productos seleccionados:
-${items.map(item => {
-  let nombre = item.name;
-  if (nombre.toLowerCase().includes('brownie')) {
-    nombre = nombre.replace(/chocolate/gi, '').replace(/\s+/g, ' ').trim();
-  }
-  let cantidad = '';
-  if (/de x\d+/i.test(nombre)) {
-    cantidad = '';
-  } else if (nombre.toLowerCase().includes('brownie')) {
-    cantidad = item.quantity > 1 ? `combo (x${item.quantity})` : 'x1';
-  } else if (nombre.toLowerCase().includes('galleta')) {
-    cantidad = 'combo (x6)';
-  } else if (nombre.toLowerCase().includes('trufa')) {
-    cantidad = 'combo (x6)';
-  } else if (nombre.toLowerCase().includes('chocolate')) {
-    cantidad = 'combo (x8)';
-  } else {
-    cantidad = `x${item.quantity}`;
-  }
-  let emoji = '🍪';
-  if (nombre.toLowerCase().includes('brownie')) emoji = '🍫';
-  if (nombre.toLowerCase().includes('galleta')) emoji = '🍪';
-  if (nombre.toLowerCase().includes('trufa')) emoji = '🍬';
-  if (nombre.toLowerCase().includes('chocolate')) emoji = '🍫';
-  if (nombre.toLowerCase().includes('postre')) emoji = '🍰';
-  return `• ${emoji} ${nombre}${cantidad ? ' ' + cantidad : ''} - $${(item.price * item.quantity).toLocaleString('es-CO')}`;
-}).join('\n')}
-
-${appliedPromoCode ? `🎫 ¡Código promocional aplicado!\n${appliedPromoCode.code} (-$${discount.toLocaleString('es-CO')}) 💰` : ''}
-
-${propina > 0 ? `💝 Propina para el equipo: $${propina.toLocaleString('es-CO')} ❤️` : ''}
-
-💵 Total a pagar: $${(total + propina).toLocaleString('es-CO')}
-
-📝 Número de orden: ${orderId}
-
-¡Gracias por elegirnos! 🙏✨`}
+        message={`SOLICITUD DE PEDIDO\n\nOrden generada: ${orderId}\n\nPRODUCTOS SOLICITADOS\n${(() => {
+          const productosList: string[] = [];
+          let count = 1;
+          items.forEach(item => {
+            for (let i = 0; i < item.quantity; i++) {
+              productosList.push(`${count}. ${item.name} $${item.price.toLocaleString('es-CO')}`);
+              count++;
+            }
+          });
+          return productosList.join('\\n');
+        })()}\n\nRESUMEN FINANCIERO\nSubtotal ............. $${total.toLocaleString('es-CO')}\nDescuentos .......... $${discount ? discount.toLocaleString('es-CO') : '0.000'}\nTOTAL PARCIAL ........ $${total.toLocaleString('es-CO')}\n${propina > 0 ? `Propina para el equipo ....... $${propina.toLocaleString('es-CO')}` : ''}\n\nel precio del domicilio aun no está incluido\n\nINFORMACION IMPORTANTE\n\nEspera la confirmación del total con domicilio y la validación del pedido por parte del equipo Ambrosia.`}
         phoneNumber={WHATSAPP_NUM}
       />
     </div>

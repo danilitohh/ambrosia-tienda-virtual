@@ -11,10 +11,7 @@ export async function GET(req: NextRequest) {
     const rateLimitResult = rateLimiters.relaxed(req);
     if (rateLimitResult) return rateLimitResult;
 
-    // Cache headers para productos
-    const response = NextResponse.json({ products: [] });
-    response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600'); // 5 min cache, 10 min stale
-
+    // Sin cache para productos: cambios se reflejan inmediatamente
     const products = await prisma.product.findMany({
       where: { isActive: true },
       select: {
@@ -29,11 +26,7 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ products }, { 
-      headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600'
-      }
-    });
+    return NextResponse.json({ products });
   } catch (error) {
     // Logging detallado
     if (error instanceof Error) {

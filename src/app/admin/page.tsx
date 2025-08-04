@@ -169,9 +169,15 @@ export default function AdminPage() {
                 placeholder="Texto del anuncio"
               />
               <div className="mb-2">
-                <label className="block mb-1">Imagen del anuncio:</label>
                 {announcementImage && (
-                  <img src={announcementImage} alt="Anuncio" width={200} height={120} className="mb-2 rounded img-anuncio" />
+                  <Image
+                    src={announcementImage}
+                    alt="Anuncio"
+                    width={200}
+                    height={120}
+                    className="mb-2 rounded img-anuncio"
+                    style={{ objectFit: "contain" }}
+                  />
                 )}
                 <input type="file" accept="image/*" onChange={e => {
                   const file = e.target.files?.[0];
@@ -251,7 +257,14 @@ export default function AdminPage() {
           {loadingSettings ? <div>Cargando...</div> : (
             <form onSubmit={e => { e.preventDefault(); handleSaveSettings(); }} className="w-full">
               {bancolombiaQr && (
-                <Image src={bancolombiaQr} alt="QR Bancolombia" width={200} height={200} className="mb-2 rounded" priority loading="lazy" />
+                <Image
+                  src={bancolombiaQr}
+                  alt="QR Bancolombia"
+                  width={200}
+                  height={200}
+                  className="mb-2 rounded"
+                  style={{ objectFit: "contain" }}
+                />
               )}
               <input type="file" accept="image/*" onChange={e => {
                 const file = e.target.files?.[0];

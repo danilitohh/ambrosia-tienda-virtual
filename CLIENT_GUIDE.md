@@ -244,6 +244,88 @@ Para soporte técnico o preguntas sobre la implementación:
 
 ---
 
+# Guía para usar la Tienda Virtual Ambrosia
+
+## 1. ¿Cómo ingresar a la tienda?
+
+- Abre tu navegador (Chrome, Safari, etc.).
+- Escribe la dirección: https://ambrosia-eosin.vercel.app/
+- Presiona Enter y espera a que cargue la página.
+
+---
+
+## 2. ¿Cómo comprar productos?
+
+1. Explora los productos en la página principal.
+2. Haz clic en el producto que te interesa para ver más detalles.
+3. Haz clic en “Agregar al carrito” para añadirlo.
+4. Cuando termines, haz clic en el ícono del carrito (arriba a la derecha).
+5. Revisa tu pedido y haz clic en “Finalizar compra”.
+6. Llena tus datos y confirma el pedido.
+7. El administrador te contactará por WhatsApp o correo para confirmar el total y el envío.
+
+---
+
+## 3. ¿Cómo pagar y recibir tu pedido?
+
+- Sigue las instrucciones que te dará el administrador (puede ser Nequi, Bancolombia, etc.).
+- Recibe tu pedido en la dirección que diste.
+
+---
+
+## 4. ¿Cómo contactar al administrador?
+
+- Usa el botón de WhatsApp en la página para enviar tus dudas o preguntas.
+- También puedes responder al correo de confirmación.
+
+---
+
+## 5. ¿Cómo usar la sección de administración?
+
+### Acceso
+
+- Ve a la página de la tienda: https://ambrosia-eosin.vercel.app/
+- Busca el botón o enlace para “Ingresar” o “Admin”.
+- Ingresa tus credenciales de administrador:
+  - **Correo:** admin@ambrosia.com
+  - **Contraseña:** admin123
+
+### Funciones principales
+
+- **Editar productos:** Puedes cambiar el nombre, precio, descripción e imágenes de los productos.
+- **Agregar nuevos productos:** Llena el formulario y sube las imágenes.
+- **Eliminar productos:** Haz clic en el botón de eliminar junto al producto.
+- **Editar información de la página:** Cambia textos, imágenes principales, anuncios y datos de contacto.
+- **Ver pedidos:** Revisa los pedidos recibidos y su estado.
+
+### ¿Cómo editar imágenes e información?
+
+1. Ingresa como administrador.
+2. Ve a la sección que quieres editar (productos, anuncios, datos de contacto, etc.).
+3. Haz clic en el botón de “Editar” o “Modificar”.
+4. Cambia la información o sube una nueva imagen.
+5. Guarda los cambios.
+
+---
+
+## 6. ¿Qué hacer si olvidas tu contraseña de administrador?
+
+- Usa la opción “Recuperar contraseña” en la página de ingreso.
+- Sigue las instrucciones para restablecerla.
+
+---
+
+## 7. ¿Qué hacer si tienes dudas o problemas?
+
+- Contacta al desarrollador o usa el botón de WhatsApp en la tienda.
+- Revisa los correos de confirmación para información adicional.
+
+---
+
+¡Listo! Así puedes comprar y administrar la Tienda Virtual Ambrosia fácilmente.
+
+---
+
 ## 🎉 ¡Tu Tienda Virtual Está Lista!
 
 Con esta configuración, tendrás una tienda virtual completamente funcional con:
@@ -255,4 +337,4 @@ Con esta configuración, tendrás una tienda virtual completamente funcional con
 - ✅ Código limpio y mantenible
 - ✅ Documentación completa
 
-**¡Disfruta vendiendo en línea con Ambrosia! 🛍️** 
+**¡Disfruta vendiendo en línea con Ambrosia! 🛍️**

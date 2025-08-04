@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://tu-proyecto.vercel.app/sitemap.xml
+Sitemap: https://ambrosia-eosin.vercel.app/sitemap.xml
 
 # Disallow admin and API routes
 Disallow: /api/
@@ -15,4 +15,4 @@ Allow: /products
 Allow: /products/*
 Allow: /nosotros
 Allow: /cart
-Allow: /checkout 
+Allow: /checkout

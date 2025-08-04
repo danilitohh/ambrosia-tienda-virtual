@@ -247,7 +247,14 @@ export default function PromoCodesPage() {
               <input
                 type="datetime-local"
                 value={formData.expiresAt}
-                onChange={(e) => setFormData({...formData, expiresAt: e.target.value})}
+                onChange={(e) => {
+                  // Convertir a formato ISO para backend
+                  const value = e.target.value;
+                  setFormData({
+                    ...formData,
+                    expiresAt: value ? new Date(value).toISOString() : ''
+                  });
+                }}
                 className="w-full px-3 py-2 bg-[#23272a] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#C6FF00]"
               />
             </div>

@@ -101,11 +101,53 @@ export default function CustomCheckout() {
               <li><b>Teléfono:</b> ${form.telefono}</li>
               <li><b>Email:</b> ${form.email}</li>
               <li><b>Número de orden:</b> ${orden}</li>
-            </ul>`
+            </ul>
+            <h3>Productos seleccionados:</h3>
+            <ul>
+              ${items.map(item => `<li>${item.name} x${item.quantity} - $${(item.price * item.quantity).toLocaleString('es-CO')}</li>`).join('')}
+            </ul>
+            <h3>Resumen financiero:</h3>
+            <ul>
+              <li>Subtotal: $${total.toLocaleString('es-CO')}</li>
+              <li>Descuentos: $${discount ? discount.toLocaleString('es-CO') : '0.000'}</li>
+              <li>Total parcial: $${total.toLocaleString('es-CO')}</li>
+              <li>Propina: $${propina.toLocaleString('es-CO')}</li>
+            </ul>
+            <p><b>El valor del domicilio será confirmado por el equipo Ambrosia.</b></p>
+            <p>Por favor confirma el valor del domicilio para completar el pago.</p>
+            <hr />
+            <h3>Mensaje para responder al cliente:</h3>
+            <pre style="background:#f6f6f6;padding:12px;border-radius:8px;white-space:pre-wrap;font-size:15px;">
+>>> *¡PEDIDO CONFIRMADO!* <<<
+
+*Orden: ${orden}*
+
+*=== PRODUCTOS SELECCIONADOS ===*
+${items.map((item, idx) => `[${idx + 1}] ${item.name} x${item.quantity}\n    Precio ................. $${(item.price * item.quantity).toLocaleString('es-CO')}`).join('\n\n')}
+
+*=== RESUMEN FINANCIERO ===*
+Subtotal .................. $${total.toLocaleString('es-CO')}
+Descuentos ................ $${discount ? discount.toLocaleString('es-CO') : '0.000'}
+*Valor de domicilio: -------*
+*TOTAL FINAL .............. $${total.toLocaleString('es-CO')} + domicilio*
+
+*=== INFORMACION IMPORTANTE ===*
+>>> Numero de orden: *${orden}*
+>>> Fecha del pedido: *${new Date().toLocaleDateString()}*
+>>> Hora del pedido: *${new Date().toLocaleTimeString()}*
+>>> Tiempo estimado: *24-48 horas*
+>>> Contacto directo: *+57 323 592 4705*
+
+*¡Gracias por confiar en nosotros!*
+********************************\n        *AMBROSIA BHANG*\n   El destino más dulce para tu antojo\n********************************
+</pre>
+            <p style="font-weight:bold;">AMBROSIA BHANG - Pedido web</p>`
         }),
       });
       const data = await res.json();
       setEnviado(data.success);
+      // Guardar orderId en localStorage
+      window.localStorage.setItem("orderId", orden);
     } catch {
       setEnviado(false);
     } finally {
@@ -116,8 +158,121 @@ export default function CustomCheckout() {
 
 
   const enviarMensajeWhatsApp = async () => {
-    // Solo mostrar el modal de WhatsApp, NO enviar correo
-    setShowWhatsAppModal(true);
+    // Mensaje optimizado para WhatsApp (sin emojis en URL)
+        // Mensaje profesional para WhatsApp (opción 1: negritas y símbolos, sin emojis)
+        const mensaje = `*¡Hola!* Aquí está mi pedido:
+\n*=== MI PEDIDO ESPECIAL ===*
+\n*PRODUCTOS SELECCIONADOS:*
+${items.map(item => {
+  let nombre = item.name;
+  if (nombre.toLowerCase().includes('brownie')) {
+    nombre = nombre.replace(/chocolate/gi, '').replace(/\s+/g, ' ').trim();
+  }
+  let cantidad = '';
+  if (/de x\d+/i.test(nombre)) {
+    cantidad = '';
+  } else if (nombre.toLowerCase().includes('brownie')) {
+    cantidad = item.quantity > 1 ? `combo (x${item.quantity})` : 'x1';
+  } else if (nombre.toLowerCase().includes('galleta')) {
+    cantidad = 'combo (x6)';
+  } else if (nombre.toLowerCase().includes('trufa')) {
+    cantidad = 'combo (x6)';
+  } else if (nombre.toLowerCase().includes('chocolate')) {
+    cantidad = 'combo (x8)';
+  } else {
+    cantidad = `x${item.quantity}`;
+  }
+  let categoria = '[DULCE]';
+  if (nombre.toLowerCase().includes('brownie')) categoria = '[BROWNIE]';
+  if (nombre.toLowerCase().includes('galleta')) categoria = '[GALLETA]';
+  if (nombre.toLowerCase().includes('trufa')) categoria = '[TRUFA]';
+  if (nombre.toLowerCase().includes('chocolate')) categoria = '[CHOCOLATE]';
+  if (nombre.toLowerCase().includes('postre')) categoria = '[POSTRE]';
+  return `• ${categoria} ${nombre}${cantidad ? ' ' + cantidad : ''} - $${(item.price * item.quantity).toLocaleString('es-CO')}`;
+}).join('\n')}
+\n${appliedPromoCode ? `*DESCUENTO APLICADO*\n${appliedPromoCode.code} (-$${discount.toLocaleString('es-CO')})` : ''}
+\n${propina > 0 ? `*PROPINA*\nPropina para el equipo: $${propina.toLocaleString('es-CO')}` : ''}
+\n*=== RESUMEN ===*\nSubtotal: $${total.toLocaleString('es-CO')}\n*TOTAL A PAGAR: $${(total + propina).toLocaleString('es-CO')}*\n\n*=== DATOS DEL PEDIDO ===*\nNumero de orden: ${orderId}\nFecha: ${new Date().toLocaleDateString()}\nCliente: Tu nombre aqui\n\n*¡Gracias por elegirnos!*\nEntrega en 24-48 horas\nWhatsApp: +57 323 592 4705\n\n*AMBROSIA BHANG`;
+
+    console.log('📱 Mensaje para WhatsApp:', mensaje);
+
+    // Detectar dispositivo
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Crear URLs sin problemas de codificación
+    const mensajeCodificado = encodeURIComponent(mensaje);
+    const urlWeb = `https://wa.me/${WHATSAPP_NUM}?text=${mensajeCodificado}`;
+    const urlApp = `whatsapp://send?phone=${WHATSAPP_NUM}&text=${mensajeCodificado}`;
+    
+    console.log('🔗 URL generada:', urlWeb.substring(0, 100) + '...');
+
+    // Función para mostrar los emojis después de abrir WhatsApp
+    const mostrarInstruccionesEmojis = () => {
+      setTimeout(() => {
+        const mensajeConEmojis = `🛍️ MI PEDIDO ESPECIAL 🛍️
+📋 PRODUCTOS SELECCIONADOS:
+${items.map(item => {
+          let nombre = item.name;
+          if (nombre.toLowerCase().includes('brownie')) {
+            nombre = nombre.replace(/chocolate/gi, '').replace(/\s+/g, ' ').trim();
+          }
+          let emoji = '🍪';
+          if (nombre.toLowerCase().includes('brownie')) emoji = '🍫';
+          if (nombre.toLowerCase().includes('galleta')) emoji = '🍪';
+          if (nombre.toLowerCase().includes('trufa')) emoji = '🍬';
+          if (nombre.toLowerCase().includes('chocolate')) emoji = '🍫';
+          return `• ${emoji} ${nombre} - $${(item.price * item.quantity).toLocaleString('es-CO')}`;
+        }).join('\n')}
+
+💰 TOTAL: $${(total + propina).toLocaleString('es-CO')}
+📋 Orden: ${orderId}
+🙏 ¡Gracias por elegirnos!`;
+
+        // Mostrar mensaje con emojis para copiar
+        if (confirm('¿Quieres copiar la versión con emojis para pegarla en WhatsApp?')) {
+          navigator.clipboard.writeText(mensajeConEmojis).then(() => {
+            alert('✅ ¡Mensaje con emojis copiado! Ahora pégalo en WhatsApp.');
+          }).catch(() => {
+            alert('❌ No se pudo copiar automáticamente. Aquí está el mensaje:\n\n' + mensajeConEmojis);
+          });
+        }
+      }, 3000);
+    };
+
+    // Abrir WhatsApp
+    try {
+      if (isMobile) {
+        // Intentar app nativa primero
+        const appWindow = window.open(urlApp, '_blank');
+        setTimeout(() => {
+          if (!appWindow || appWindow.closed) {
+            window.open(urlWeb, '_blank');
+          }
+        }, 1500);
+      } else {
+        // Desktop: WhatsApp Web
+        const webWindow = window.open(urlWeb, '_blank');
+        if (!webWindow) {
+          throw new Error('Popup bloqueado');
+        }
+      }
+      
+      // Mostrar opción de emojis después de abrir
+      mostrarInstruccionesEmojis();
+      
+    } catch (error) {
+      console.error('❌ Error:', error);
+      
+      // Fallback completo
+      if (confirm('No se pudo abrir WhatsApp automáticamente. ¿Copiar mensaje al portapapeles?')) {
+        navigator.clipboard.writeText(mensaje).then(() => {
+          alert('✅ Mensaje copiado! Ve a WhatsApp y pégalo manualmente.');
+          window.open('https://web.whatsapp.com/', '_blank');
+        }).catch(() => {
+          alert('Mensaje para WhatsApp:\n\n' + mensaje);
+        });
+      }
+    }
   };
 
 
@@ -328,4 +483,4 @@ ${propina > 0 ? `💝 Propina para el equipo: $${propina.toLocaleString('es-CO')
       />
     </div>
   );
-} 
+}

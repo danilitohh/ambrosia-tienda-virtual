@@ -171,7 +171,7 @@ export default function AdminPage() {
               <div className="mb-2">
                 <label className="block mb-1">Imagen del anuncio:</label>
                 {announcementImage && (
-                  <Image src={announcementImage} alt="Anuncio" width={200} height={120} className="mb-2 rounded img-anuncio" priority loading="lazy" />
+                  <img src={announcementImage} alt="Anuncio" width={200} height={120} className="mb-2 rounded img-anuncio" />
                 )}
                 <input type="file" accept="image/*" onChange={e => {
                   const file = e.target.files?.[0];

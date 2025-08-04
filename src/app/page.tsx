@@ -195,10 +195,7 @@ export default function Home() {
             {/* User Actions */}
             <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-center">
               <CartIndicator />
-              <UserMenu />
-              <button className="md:hidden text-gray-300 hover:text-white">
-                <Menu className="h-6 w-6" />
-              </button>
+                    <UserMenu />
             </div>
           </div>
         </div>

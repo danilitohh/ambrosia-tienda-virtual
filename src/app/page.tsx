@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link"
-import { ShoppingCart, Menu, ArrowRight, X } from "lucide-react"
+import { ShoppingCart, ArrowRight, X } from "lucide-react"
 import { UserMenu } from "@/components/ui/user-menu";
 import { CartIndicator } from "@/components/ui/cart-indicator";
 import Image from "next/image";

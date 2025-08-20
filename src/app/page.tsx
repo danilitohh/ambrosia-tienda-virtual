@@ -248,9 +248,9 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 w-full">
               {[
-                "Brownie de chocolate x3",
-                "Galletas",
-                "Chocolates"
+                "Brownies x3",
+                "Galletas x6 ",
+                "Chocolates x8"
               ].map(nombre => {
                 const prod = products.find(p => p.name.trim().toLowerCase() === nombre.toLowerCase());
                 return prod ? (

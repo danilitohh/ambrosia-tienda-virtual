@@ -240,12 +240,8 @@ export default function Home() {
             <div className="text-center text-white">Cargando productos...</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 w-full">
-              {[
-                "Brownies x3",
-                "Galletas x6 ",
-                "Chocolates x8"
-              ].map(nombre => {
-                const prod = products.find(p => p.name.trim().toLowerCase() === nombre.toLowerCase());
+              {["Brownies x3", "Galletas x6", "Chocolates x8"].map(nombre => {
+                const prod = products.find(p => p.name.trim().toLowerCase().replace(/\s+/g, ' ') === nombre.trim().toLowerCase().replace(/\s+/g, ' '));
                 return prod ? (
                   <div key={prod.id} className="rounded-lg overflow-hidden hover:transform hover:scale-105 transition-transform w-full" style={{ background: '#181818', border: '1px solid #222' }}>
                     <div className="h-40 sm:h-72 bg-gray-900 flex items-center justify-center w-full">

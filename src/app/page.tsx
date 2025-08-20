@@ -285,10 +285,11 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 w-full">
             {[
-              {
-                title: "Envíos seguros",
-                description: "Empacamos discretamente y trabajamos con transportadoras confiables para que tu pedido llegue a salvo. Puede ser entrega el mismo día. Si son envíos fuera de Medellín llegan de 1 a 2 día hábiles.",
-                icon: "📦",
+              {[
+                "Brownies x3",
+                "Chocolates x8",
+                "Galletas x6 "
+              ].map(nombre => {
               },
               {
                 title: "Guía de consumo",

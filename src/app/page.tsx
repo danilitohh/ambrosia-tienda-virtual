@@ -105,7 +105,7 @@ export default function Home() {
   };
 
 
-  return (
+  return (<>
     <div className="min-h-screen bg-black w-full">
       {/* Modal de Anuncio */}
       {showAnnouncement && (
@@ -124,7 +124,6 @@ export default function Home() {
             >
               <X className="h-6 w-6" />
             </button>
-            
             {/* Imagen del anuncio */}
             <div className="relative rounded-lg overflow-hidden shadow-2xl animate-in zoom-in duration-300 w-full">
               {announcementConfig?.announcementImage ? (
@@ -141,7 +140,6 @@ export default function Home() {
                   <span className="text-gray-400">Sin imagen</span>
                 </div>
               )}
-              
               {/* Overlay con información adicional */}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-2 sm:p-6 w-full">
                 <div className="text-center w-full">
@@ -174,7 +172,6 @@ export default function Home() {
           </div>
         </div>
       )}
-
       {/* Header */}
       <header className="bg-black border-b border-gray-700 w-full">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 w-full">
@@ -188,7 +185,6 @@ export default function Home() {
                 Ambrosia Bhang
               </Link>
             </div>
-
             {/* Navigation */}
             <nav className="hidden md:flex space-x-4 sm:space-x-8">
               <Link href="/products" className="text-[#C6FF00] hover:text-[#b2e600] transition-colors">
@@ -198,16 +194,14 @@ export default function Home() {
                 Nosotros
               </Link>
             </nav>
-
             {/* User Actions */}
             <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-center">
               <CartIndicator />
-                    <UserMenu />
+              <UserMenu />
             </div>
           </div>
         </div>
       </header>
-
       {/* Hero Section */}
       <section className="relative py-10 sm:py-20 bg-black w-full">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 w-full">
@@ -238,7 +232,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Sección Productos más vendidos */}
       <section className="py-8 sm:py-16 bg-black w-full">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 w-full">
@@ -276,7 +269,6 @@ export default function Home() {
           )}
         </div>
       </section>
-
       {/* Features */}
       <section className="py-8 sm:py-16 bg-black w-full">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 w-full">
@@ -285,12 +277,6 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 w-full">
             {[
-              {[
-                "Brownies x3",
-                "Chocolates x8",
-                "Galletas x6 "
-              ].map(nombre => {
-              },
               {
                 title: "Guía de consumo",
                 description: "Cumplimos con guías de consumo para tener más conciencia del viaje",
@@ -311,7 +297,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Footer */}
       <footer className="bg-black border-t border-gray-700 w-full">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-8 sm:py-12 w-full">
@@ -344,5 +329,5 @@ export default function Home() {
         </div>
       </footer>
     </div>
-  )
+  </>);
 }

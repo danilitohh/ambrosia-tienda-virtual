@@ -23,6 +23,12 @@ type Product = {
 };
 
 export default function ProductsPage() {
+  // Normaliza rutas de imagen: si no empieza por http(s) o /, anteponer /
+  const safeImage = (img?: string) => {
+    if (!img) return "/producto1.jpeg";
+    if (img.startsWith("http://") || img.startsWith("https://") || img.startsWith("/")) return img;
+    return `/${img.replace(/^\/+/, "")}`;
+  };
   const { addItem } = useCart();
   const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
   const [addingToCart, setAddingToCart] = useState<{ [id: string]: boolean }>({});
@@ -68,14 +74,14 @@ export default function ProductsPage() {
         name: product.name, 
         price: product.price, 
         quantity,
-        image: product.images?.[0] || ""
+        image: safeImage(product.images?.[0])
       });
       setAddedToCart(prev => ({ ...prev, [product.id]: true }));
       addToast({
         type: "success",
         title: "¡Producto agregado al carrito!",
         message: `Agregaste <b>${product.name}</b> <span style='color:#C6FF00;'>x${quantity}</span> a tu carrito.`,
-        imageUrl: product.images?.[0] || "",
+        imageUrl: safeImage(product.images?.[0]),
         duration: 3500,
       });
       setTimeout(() => {
@@ -131,7 +137,7 @@ export default function ProductsPage() {
                 {/* Imagen a la izquierda */}
                 <div className="relative w-full md:w-1/2 min-w-[160px] sm:min-w-[200px] max-w-full md:max-w-[320px] aspect-[16/9] bg-gray-900 flex items-center justify-center">
                   <Image
-                    src={product.images?.[0] || "/producto1.jpeg"}
+                    src={safeImage(product.images?.[0])}
                     alt={product.name}
                     fill
                     className="object-contain"

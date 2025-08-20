@@ -97,6 +97,13 @@ export default function Home() {
     setShowAnnouncement(false);
   };
 
+  // Normaliza rutas de imagen de productos por si vienen sin prefijo
+  const safeImage = (img?: string) => {
+    if (!img) return "/producto1.jpeg";
+    if (img.startsWith("http://") || img.startsWith("https://") || img.startsWith("/")) return img;
+    return `/${img.replace(/^\/+/, "")}`;
+  };
+
 
   return (
     <div className="min-h-screen bg-black w-full">
@@ -250,7 +257,7 @@ export default function Home() {
                   <div key={prod.id} className="rounded-lg overflow-hidden hover:transform hover:scale-105 transition-transform w-full" style={{ background: '#181818', border: '1px solid #222' }}>
                     <div className="h-40 sm:h-72 bg-gray-900 flex items-center justify-center w-full">
                       <Image 
-                        src={prod.images[0] || "/producto1.jpeg"} 
+                        src={safeImage(prod.images[0])} 
                         alt={prod.name} 
                         width={350} 
                         height={250} 
